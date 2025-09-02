@@ -1,0 +1,69 @@
+---
+k8sServiceHost: localhost # talos' KubePrism
+k8sServicePort: 7445
+kubeProxyReplacement: true # use Cilium
+ipv6:
+  enabled: true
+gatewayAPI:
+  enabled: true
+  gatewayClass:
+    create: "true" # neesd quots or else "Expected: string, given: boolean"
+bgpControlPlane:
+  enabled: false
+l7Proxy: true
+ipam:
+  mode: kubernetes
+cgroup:
+  autoMount:
+    enabled: false
+  hostRoot: /sys/fs/cgroup
+k8sClientRateLimit:
+  qps: 30
+  burst: 35
+envoy:
+  enabled: true
+  securityContext:
+    capabilities:
+      keepCapNetBindService: true
+prometheus:
+  enabled: true
+operator:
+  prometheus:
+    enabled: true
+encryption:
+  enabled: true
+  type: wireguard
+securityContext:
+  capabilities:
+    cleanCiliumState:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_RESOURCE
+    ciliumAgent:
+      - CHOWN
+      - KILL
+      - NET_ADMIN
+      - NET_RAW
+      - IPC_LOCK
+      - SYS_ADMIN
+      - SYS_RESOURCE
+      - DAC_OVERRIDE
+      - FOWNER
+      - SETGID
+      - SETUID
+hubble:
+  enabled: true
+  relay:
+    enabled: true
+  ui:
+    enabled: true
+  metrics:
+    enableOpenMetrics: true
+    enabled: 
+      - dns
+      - drop
+      - tcp
+      - flow
+      - port-distribution
+      - icmp
+      - httpV2:exemplars=true;labelsContext=source_ip,source_namespace,source_workload,destination_ip,destination_namespace,destination_workload,traffic_direction
