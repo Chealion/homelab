@@ -1,0 +1,21 @@
+---
+global:
+  domain: argo.k8s.notsodefault.ca
+configs:
+  params:
+    server.insecure: true
+controller:
+  metrics:
+    enabled: true
+redis:
+  metrics:
+    enabled: true
+server:
+  metrics:
+    enabled: true
+# ingress:
+#   enabled: true
+repoServer:
+  metrics:
+    enabled: true
+
