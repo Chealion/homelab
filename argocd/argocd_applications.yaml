@@ -10,7 +10,7 @@ spec:
     path: argocd/apps/
     repoURL: https://github.com/chealion/homelab.git
     targetRevision: main
-  project: default
+  project: argocd
   syncPolicy:
     automated:
       prune: true
