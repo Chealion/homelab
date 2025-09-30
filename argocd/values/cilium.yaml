@@ -68,7 +68,7 @@ hubble:
       - icmp
       - httpV2:exemplars=true;labelsContext=source_ip,source_namespace,source_workload,destination_ip,destination_namespace,destination_workload,traffic_direction
   peerService:
-    clusterDomain: notsodefault
+    clusterDomain: notsodefault.ca
     tls:
       auto:
         enabled: true
