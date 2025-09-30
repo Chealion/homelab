@@ -6,7 +6,7 @@
 
 ## Argo CD
 
-Two app of apps to create all the applications in Argo CD.
+Two app of apps to create all the applications in Argo CD. Values are stored in one directory
 
 ### Infra
 
@@ -21,3 +21,4 @@ Two app of apps to create all the applications in Argo CD.
 * 
 
 ## Resources and Inspiration
+* 
