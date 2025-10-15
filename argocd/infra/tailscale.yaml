@@ -13,11 +13,11 @@ spec:
   sources:
     - chart: tailscale-operator
       repoURL: https://pkgs.tailscale.com/helmcharts
-      targetRevision: 1.88.3
+      targetRevision: 1.88.4
       helm:
         valueFiles:
         - $values/argocd/values/tailscale.yaml
-    - repoURL: https://github.com/chealion/chealion-infra
+    - repoURL: https://github.com/chealion/homelab
       targetRevision: main
       ref: values
   destination:
