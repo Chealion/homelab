@@ -1,0 +1,20 @@
+---
+# https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
+
+defaultRules: # Line 168
+  create: false
+
+alertmanager: # Line 384
+  enabled: false
+
+grafana: # Line 1225
+  enabled: false
+
+kubeEtcd: # Line 2125
+  enabled: false # Needs tweaks for Talos
+
+kubeProxy:
+  enabled: false # Cilium
+
+prometheus: # Line 3397
+  enabled: false

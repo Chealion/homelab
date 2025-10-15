@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kube-prometheus-stack
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "90"
+    argocd.argoproj.io/compare-options: ServerSideDiff=true # https://github.com/argoproj/argo-cd/issues/19038
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  ignoreDifferences:
+    # ignore webhook failurePolicy as prom updates them itself
+    - group: "*"
+      kind: MutatingWebhookConfiguration
+      jqPathExpressions:
+        - '.webhooks[]?.failurePolicy'
+    - group: "*"
+      kind: ValidatingWebhookConfiguration
+      jqPathExpressions:
+        - '.webhooks[]?.failurePolicy'
+  project: default
+  sources:
+    - chart: kube-prometheus-stack
+      repoURL: https://prometheus-community.github.io/helm-charts
+      targetRevision: 78.2.1 # Prometheus 3.6, Grafana 12.2.0
+      helm:
+        valueFiles:
+        - $values/argocd/values/kube-prom-stack.yaml
+    - repoURL: https://github.com/chealion/homelab
+      targetRevision: main
+      ref: values
+  destination:
+    name: in-cluster
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropogationPolicy=foreground
+      - PruneLast=true
+      - ServerSideApply=true
