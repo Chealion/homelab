@@ -10,6 +10,10 @@ gatewayAPI:
     create: "true" # neesd quots or else "Expected: string, given: boolean"
 bgpControlPlane:
   enabled: false
+l2announcements:
+  enabled: true
+nodeIPAM:
+  enabled: true
 l7Proxy: true
 ipam:
   mode: kubernetes

@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: external-secrets-objects
+  name: cilium-objects
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "41"
@@ -13,10 +13,10 @@ spec:
   sources:
     - repoURL: https://github.com/chealion/homelab
       targetRevision: main
-      path: argocd/objects/external-secrets/
+      path: argocd/objects/cilium/
   destination:
     name: in-cluster
-    namespace: external-secrets
+    namespace: kube-system
   syncPolicy:
     automated:
       prune: true
