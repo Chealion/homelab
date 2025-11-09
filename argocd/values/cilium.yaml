@@ -7,7 +7,7 @@ ipv6:
 gatewayAPI:
   enabled: true
   gatewayClass:
-    create: "true" # neesd quots or else "Expected: string, given: boolean"
+    create: true # neesd quots or else "Expected: string, given: boolean"
 bgpControlPlane:
   enabled: false
 l2announcements:
