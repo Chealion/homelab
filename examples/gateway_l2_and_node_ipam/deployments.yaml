@@ -1,0 +1,50 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: echoserver-l2
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: echoserver-l2
+  template:
+    metadata:
+      labels:
+        app: echoserver-l2
+    spec:
+      containers:
+      - image: ealen/echo-server:latest
+        imagePullPolicy: IfNotPresent
+        name: echoserver
+        ports:
+        - containerPort: 80
+        env:
+        - name: PORT
+          value: "80"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: echoserver-node
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: echoserver-node
+  template:
+    metadata:
+      labels:
+        app: echoserver-node
+    spec:
+      containers:
+      - image: ealen/echo-server:latest
+        imagePullPolicy: IfNotPresent
+        name: echoserver
+        ports:
+        - containerPort: 80
+        env:
+        - name: PORT
+          value: "80"

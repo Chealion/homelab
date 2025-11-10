@@ -1,0 +1,32 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: l2-service
+  labels:
+    app: echoserver-l2
+    service: l2-service
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: echoserver-l2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-service
+  labels:
+    app: echoserver-node
+    service: node-service
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: echoserver-node

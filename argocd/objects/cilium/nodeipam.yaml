@@ -9,13 +9,13 @@ spec:
     group: cilium.io
     kind: CiliumGatewayClassConfig
     name: nodelbam-gateway-config
-    namespace: argocd
+    namespace: default
 ---
 apiVersion: cilium.io/v2alpha1
 kind: CiliumGatewayClassConfig
 metadata:
   name: nodelbam-gateway-config
-  namespace: argocd
+  namespace: default
 spec:
   service:
     loadBalancerClass: io.cilium/node
