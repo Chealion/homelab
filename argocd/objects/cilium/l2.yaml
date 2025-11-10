@@ -29,7 +29,7 @@ metadata:
   name: l2-gateway-class
 spec:
   controllerName: io.cilium/gateway-controller
-  description: Non default gateway class to use node ipam.
+  description: Non default gateway class for l2 announced services
   parametersRef:
     group: cilium.io
     kind: CiliumGatewayClassConfig

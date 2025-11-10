@@ -2,19 +2,20 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: GatewayClass
 metadata:
-  name: nodelbam-gateway-class
+  name: nodeipamlb-gateway-class
 spec:
   controllerName: io.cilium/gateway-controller
+  description: Non default gateway class for node ipam lb services
   parametersRef:
     group: cilium.io
     kind: CiliumGatewayClassConfig
-    name: nodelbam-gateway-config
+    name: nodeipamlb-gateway-config
     namespace: default
 ---
 apiVersion: cilium.io/v2alpha1
 kind: CiliumGatewayClassConfig
 metadata:
-  name: nodelbam-gateway-config
+  name: nodeipamlb-gateway-config
   namespace: default
 spec:
   service:
