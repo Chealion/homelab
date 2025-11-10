@@ -7,10 +7,10 @@ spec:
   blocks:
   - cidr: "192.168.8.248/29"
   - cidr: "2001:56a:7116:3200::/64"
-# Comment out to make default and not require a dedicated GatewayConfig for now
-#  serviceSelector:
-#    matchLabels:
-#      ipam: homelab-l2
+  # Only works for services and gateways with the ipam: homelab-l2 label
+  serviceSelector:
+    matchLabels:
+      ipam: homelab-l2
 ---
 apiVersion: "cilium.io/v2alpha1"
 kind: CiliumL2AnnouncementPolicy
@@ -21,3 +21,25 @@ spec:
   - ^enp[0-9]s[0-9]f[0-9]+
   externalIPs: true
   loadBalancerIPs: true
+
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: l2-gateway-class
+spec:
+  controllerName: io.cilium/gateway-controller
+  description: Non default gateway class to use node ipam.
+  parametersRef:
+    group: cilium.io
+    kind: CiliumGatewayClassConfig
+    name: l2-gateway-config
+    namespace: default
+---
+apiVersion: cilium.io/v2alpha1
+kind: CiliumGatewayClassConfig
+metadata:
+  name: l2-gateway-config
+  namespace: default
+  labels:
+    ipam: homelab-l2
