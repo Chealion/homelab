@@ -1,8 +1,9 @@
 ---
 apiVersion: external-secrets.io/v1
-kind: SecretStore
+kind: ClusterSecretStore
 metadata:
   name: 1password-sdk
+  namespace: external-secrets
 spec:
   provider:
     onepasswordSDK:
@@ -10,6 +11,7 @@ spec:
       auth:
         serviceAccountSecretRef:
           name: onepassword-eso
+          namespace: external-secrets
           key: token
 
 ---
@@ -19,7 +21,7 @@ metadata:
   name: fetch-from-onepassword
 spec:
   secretStoreRef:
-    kind: SecretStore
+    kind: ClusterSecretStore
     name: 1password-sdk
   target:
     creationPolicy: Owner
