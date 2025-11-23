@@ -3,4 +3,4 @@ installCRDs: true
 operatorConfig:
   ingressClass:
     enabled: true
-# oauth.clientId and Secret are created using External Secrets Operator and 1Password. Eventually
+# oauth.clientId and Secret are created using External Secrets Operator and 1Password. (See tailscale-objects app)

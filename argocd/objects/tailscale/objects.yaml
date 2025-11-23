@@ -1,0 +1,20 @@
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: operator-oauth
+spec:
+  refreshInterval: "300s"
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: 1password-sdk
+  target:
+    name: operator-oauth
+    creationPolicy: Owner
+  data:
+    - secretKey: client_id
+      remoteRef:
+        key: tailscale-oauth/username
+    - secretKey: client_secret
+      remoteRef:
+        key: tailscale-oauth/password
