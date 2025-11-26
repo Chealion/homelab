@@ -23,8 +23,12 @@ kubeEtcd: # Line 2125
 kubeProxy:
   enabled: false # Cilium
 
+prometheus-node-exporter: # Line 2502
+  enabled: false
+
 prometheus: # Line 3369
   enabled: true
   service:
     ipDualStack:
       enabled: true
+
