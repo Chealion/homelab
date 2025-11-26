@@ -1,28 +1,5 @@
 ---
 apiVersion: gateway.networking.k8s.io/v1
-kind: Gateway
-metadata:
-  name: argocd-gateway
-  namespace: argocd
-spec:
-  gatewayClassName: nodeipamlb-gateway-class
-  listeners:
-  - protocol: HTTP
-    port: 80
-    name: argocd-gateway
-    hostname: argo.k8s.notsodefault.ca
-#  - protocol: HTTPS
-#    port: 443
-#    name: argocd-gateway-tls
-#    hostname: argo.k8s.notsodefault.ca
-#  tls:
-    # Synced by OP
-#    certificateRefs:
-#      - kind: Secret
-#        name: argocd-server-tls
-
----
-apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: argocd-route
@@ -32,6 +9,7 @@ spec:
     - argo.k8s.notsodefault.ca
   parentRefs:
     - name: argocd-gateway
+      namespace: kube-system
   rules:
   - backendRefs:
     - name: argocd-server

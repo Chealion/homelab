@@ -1,0 +1,30 @@
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: cluster-gateway
+  namespace: kube-system
+spec:
+  gatewayClassName: nodeipamlb-gateway-class
+  listeners:
+  - protocol: HTTP
+    port: 80
+    name: argocd-gateway
+    hostname: argo.k8s.notsodefault.ca
+  - protocol: HTTP
+    port: 80
+    name: grafana-gateway
+    hostname: grafana.k8s.notsodefault.ca
+  - protocol: HTTP
+    port: 80
+    name: prometheus-gateway
+    hostname: prometheus.k8s.notsodefault.ca
+#  - protocol: HTTPS
+#    port: 443
+#    name: argocd-gateway-tls
+#    hostname: argo.k8s.notsodefault.ca
+#  tls:
+    # Synced by OP
+#    certificateRefs:
+#      - kind: Secret
+#        name: argocd-server-tls
