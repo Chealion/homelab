@@ -28,11 +28,3 @@ prometheus: # Line 3369
   service:
     ipDualStack:
       enabled: true
-  # BETA. Does not make gateway. That's handled in objects
-  route:
-    main:
-      enabled: true
-      hostnames:
-        - prometheus.k8s.notsodefault.ca
-      parentRefs:
-        - prometheus-gateway
