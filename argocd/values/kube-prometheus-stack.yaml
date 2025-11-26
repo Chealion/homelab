@@ -30,5 +30,5 @@ prometheus: # Line 3369
   enabled: true
   service:
     ipDualStack:
-      enabled: true
+      enabled: false
 
