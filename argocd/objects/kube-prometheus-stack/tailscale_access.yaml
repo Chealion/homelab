@@ -1,0 +1,32 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana-tailscale
+spec:
+  defaultBackend:
+    service:
+      name: kube-prometheus-stack-grafana
+      port:
+        number: 80
+  ingressClassName: tailscale
+  tls:
+    - hosts:
+      # grafana.taila8d0e.ts.net
+      - grafana
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: prometheus-tailscale
+spec:
+  defaultBackend:
+    service:
+      name: kube-prometheus-stack-prometheus
+      port:
+        number: 80
+  ingressClassName: tailscale
+  tls:
+    - hosts:
+      # prometheus.taila8d0e.ts.net
+      - prometheus

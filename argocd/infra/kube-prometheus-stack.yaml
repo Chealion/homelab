@@ -24,7 +24,7 @@ spec:
     - chart: kube-prometheus-stack
       repoURL: https://prometheus-community.github.io/helm-charts
       # https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack
-      targetRevision: 79.7.1 # Prometheus 3.7.3, Grafana 12.3.0, Node Exporter 1.10.2
+      targetRevision: 79.8.2 # Prometheus 3.7.3, Grafana 12.3.0, Node Exporter 1.10.2
       helm:
         valueFiles:
         - $values/argocd/values/kube-prom-stack.yaml
