@@ -7,18 +7,38 @@ metadata:
 spec:
   gatewayClassName: nodeipamlb-gateway-class
   listeners:
+
   - protocol: HTTP
     port: 80
     name: argocd-gateway
     hostname: argo.k8s.notsodefault.ca
+    allowedRoutes:
+      namespaces:
+        from: Selector
+        selector:
+          matchLabels:
+            shared-gateway-access: "true"
   - protocol: HTTP
     port: 80
     name: grafana-gateway
     hostname: grafana.k8s.notsodefault.ca
+    allowedRoutes:
+      namespaces:
+        from: Selector
+        selector:
+          matchLabels:
+            shared-gateway-access: "true"
   - protocol: HTTP
     port: 80
     name: prometheus-gateway
     hostname: prometheus.k8s.notsodefault.ca
+    allowedRoutes:
+      namespaces:
+        from: Selector
+        selector:
+          matchLabels:
+            shared-gateway-access: "true"
+
 #  - protocol: HTTPS
 #    port: 443
 #    name: argocd-gateway-tls

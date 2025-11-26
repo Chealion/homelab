@@ -8,7 +8,7 @@ spec:
   hostnames:
     - grafana.k8s.notsodefault.ca
   parentRefs:
-    - name: grafana-gateway
+    - name: cluster-gateway
       namespace: kube-system
   rules:
   - backendRefs:
@@ -29,7 +29,7 @@ spec:
   hostnames:
     - prometheus.k8s.notsodefault.ca
   parentRefs:
-    - name: prometheus-gateway
+    - name: cluster-gateway
       namespace: kube-system
   rules:
   - backendRefs:
