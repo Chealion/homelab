@@ -16,7 +16,7 @@ spec:
       path: argocd/objects/kube-prometheus-stack/
   destination:
     name: in-cluster
-    namespace: kube-prometheus-stack
+    namespace: monitoring
   syncPolicy:
     automated:
       prune: true
