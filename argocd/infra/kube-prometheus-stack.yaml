@@ -27,7 +27,7 @@ spec:
       targetRevision: 79.8.2 # Prometheus 3.7.3, Grafana 12.3.0, Node Exporter 1.10.2
       helm:
         valueFiles:
-        - $values/argocd/values/kube-prom-stack.yaml
+        - $values/argocd/values/kube-prometheus-stack.yaml
     - repoURL: https://github.com/chealion/homelab
       targetRevision: main
       ref: values
