@@ -31,7 +31,7 @@ spec:
     tls:
       mode: Terminate
       certificateRefs:
-        - name: test-tls
+        - name: test-listener-cert
 
   - protocol: HTTP
     port: 80
@@ -53,13 +53,3 @@ spec:
         selector:
           matchLabels:
             shared-gateway-access: "true"
-
-#  - protocol: HTTPS
-#    port: 443
-#    name: argocd-gateway-tls
-#    hostname: argo.k8s.notsodefault.ca
-#  tls:
-    # Synced by OP
-#    certificateRefs:
-#      - kind: Secret
-#        name: argocd-server-tls
