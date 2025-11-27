@@ -16,7 +16,7 @@ spec:
       path: argocd/objects/metrics-server/
   destination:
     name: in-cluster
-    namespace: metrics-server
+    namespace: kube-system
   syncPolicy:
     automated:
       prune: true
