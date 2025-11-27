@@ -9,6 +9,7 @@ spec:
     - grafana.k8s.notsodefault.ca
   parentRefs:
     - name: cluster-gateway
+      sectionName: grafana-listener
       namespace: kube-system
   rules:
   - backendRefs:
@@ -30,6 +31,7 @@ spec:
     - prometheus.k8s.notsodefault.ca
   parentRefs:
     - name: cluster-gateway
+      sectionName: prometheus-listener
       namespace: kube-system
   rules:
   - backendRefs:
