@@ -5,7 +5,7 @@ metadata:
   name: cluster-gateway
   namespace: kube-system
   annotations:
-    cert-manager.io/issuer: cert-manager-cluster-issuer
+    cert-manager.io/cluster-issuer: cert-manager-cluster-issuer
 spec:
   gatewayClassName: nodeipamlb-gateway-class
   listeners:
