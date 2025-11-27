@@ -1,0 +1,10 @@
+---
+crds:
+  enabled: true
+  installCRDs: true
+config:
+  enableGatewayAPI: true
+prometheus:
+  enabled: true
+  servicemonitor:
+    enabled: true
