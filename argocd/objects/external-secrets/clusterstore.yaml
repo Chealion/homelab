@@ -20,7 +20,7 @@ kind: ExternalSecret
 metadata:
   name: fetch-from-onepassword
 spec:
-  refreshInterval: "86400s"
+  refreshPolicy: OnChange
   secretStoreRef:
     kind: ClusterSecretStore
     name: 1password-sdk
