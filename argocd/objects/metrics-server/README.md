@@ -6,10 +6,10 @@ A local version of the two YAML files needed to enable the metrics server.
 https://github.com/alex1989hu/kubelet-serving-cert-approver
 
 ```
-wget https://raw.githubusercontent.com/alex1989hu/kubelet-serving-cert-approver/v0.10.0/deploy/standalone-install.yaml -O kubelet-cert.yaml
+wget https://raw.githubusercontent.com/alex1989hu/kubelet-serving-cert-approver/v0.10.1/deploy/standalone-install.yaml -O kubelet-cert.yaml
 ```
 
-Current version is the same as the 0.10.0 release from Nov. 22, 2025
+Current version is the same as the 0.10.1 release from Dec. 6, 2025
 
 ## Kubernetes Metrics Server
 https://github.com/kubernetes-sigs/metrics-server
