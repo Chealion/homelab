@@ -78,3 +78,13 @@ hubble:
         enabled: true
         method: helm
         certValidityDuration: 1095
+  export:
+    fileMaxSizeMb: 10
+    static:
+      enabled: true
+      filePath: /var/run/cilium/hubble/events.log
+    allowList:
+      - '{"traffic_direction":"INGRESS"}'
+    denyList:
+      - '{"source_pod":["kube-system/"]}'
+      - '{"destination_pod":["kube-system/"]}'
