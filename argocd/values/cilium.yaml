@@ -93,8 +93,8 @@ hubble:
       enabled: true
       filePath: /var/run/cilium/hubble/events.log
       allowList:
-        - '{"traffic_direction":"INGRESS"}'
-        - '{"protocol":"http"}'
+        - '{"traffic_direction":["INGRESS"]}'
+        - '{"protocol":["http"]}'
       denyList:
         - '{"source_pod":["kube-system/"]}'
         - '{"destination_pod":["kube-system/"]}'
