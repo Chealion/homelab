@@ -1,6 +1,11 @@
 ---
 # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
 
+crds:
+  enabled: true
+  upgradeJob:
+    enabled: false
+
 defaultRules: # Line 168
   create: true
 
