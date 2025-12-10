@@ -6,7 +6,5 @@ spec:
   hostname: k8s-subnet-router
   subnetRouter:
     advertiseRoutes:
-      # pods
-      - 10.244.0.0/16
-      # service
-      - 10.96.0.0/12
+      # Advertise k8s services
+      - 192.168.8.248/29
