@@ -14,11 +14,6 @@ l2announcements:
   enabled: true
 nodeIPAM:
   enabled: true
-# L7 network policy NOT a proxy
-l7Proxy: true
-# The below is needed to use envoy-proxy and not just Cilium's routing.
-loadbalancer:
-  backend: enable
 ipam:
   mode: kubernetes
 cgroup:
@@ -28,12 +23,9 @@ cgroup:
 k8sClientRateLimit:
   qps: 30
   burst: 35
+# Enables Cilium's L7 policy. Not envoy.
+l7Proxy: true
 envoy:
-  # log: is enabled by default... but where are the access logs?
-  # https://www.envoyproxy.io/docs/envoy/latest/operations/cli#cmdoption-log-format
-  # %v is relying on something to make an HTTP log line...
-  # Compared to https://gateway.envoyproxy.io/docs/tasks/observability/proxy-accesslog/... which is not configured at all?
-  # Or can we enable it with telemetry->accessLog->disable: false?
   enabled: true
   securityContext:
     capabilities:
