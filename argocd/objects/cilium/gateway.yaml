@@ -66,3 +66,44 @@ spec:
       mode: Terminate
       certificateRefs:
         - name: prometheus-listener-cert
+
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: l2-internal-gateway
+  namespace: kube-system
+spec:
+  gatewayClassName: l2-gateway-class
+  infrastructure:
+    labels:
+      ipam: homelab-l2
+  listeners:
+
+  - protocol: HTTP
+    name: test-listener
+    hostname: test.k8s.notsodefault.ca
+    port: 80
+    allowedRoutes:
+      namespaces:
+        from: All
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: l2-external-gateway
+  namespace: kube-system
+spec:
+  gatewayClassName: l2-external-gateway-class
+  infrastructure:
+    labels:
+      ipam: homelab-l2-external
+  listeners:
+
+  - protocol: HTTP
+    name: test-listener
+    hostname: test.k8s.notsodefault.ca
+    port: 80
+    allowedRoutes:
+      namespaces:
+        from: All

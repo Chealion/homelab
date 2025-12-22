@@ -1,0 +1,47 @@
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: "homelab-l2-external"
+spec:
+  blocks:
+  - cidr: "192.168.2.0/24"
+  - cidr: "2001:56a:7116:3201::/64"
+  # Only works for services and gateways with the ipam: homelab-l2 label
+  serviceSelector:
+    matchLabels:
+      ipam: homelab-l2-external
+---
+apiVersion: "cilium.io/v2alpha1"
+kind: CiliumL2AnnouncementPolicy
+metadata:
+  name: l2-external-policy
+spec:
+  interfaces:
+  - ^eno1.2
+  - ^enp3s0.2
+  - ^enp130s0f0.2
+  externalIPs: true
+  loadBalancerIPs: true
+
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: l2-external-gateway-class
+spec:
+  controllerName: io.cilium/gateway-controller
+  description: Non default gateway class for l2 announced services on vlan 2
+  parametersRef:
+    group: cilium.io
+    kind: CiliumGatewayClassConfig
+    name: l2-external-gateway-config
+    namespace: default
+---
+apiVersion: cilium.io/v2alpha1
+kind: CiliumGatewayClassConfig
+metadata:
+  name: l2-external-gateway-config
+  namespace: default
+  labels:
+    ipam: homelab-l2-external
