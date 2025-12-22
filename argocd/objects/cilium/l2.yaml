@@ -6,7 +6,7 @@ metadata:
 spec:
   blocks:
   - cidr: "192.168.8.248/29"
-  - cidr: "2001:56a:7116:3200::/64"
+  - cidr: "2001:56a:7116:3200:8::/65"
   # Only works for services and gateways with the ipam: homelab-l2 label
   serviceSelector:
     matchLabels:
@@ -18,7 +18,9 @@ metadata:
   name: l2-policy
 spec:
   interfaces:
-  - ^enp[0-9]s[0-9]f[0-9]+
+  - ^enp[0-9]+s[0-9]f[0-9]
+  - ^enp[0-9]s[0-9]
+  - ^eno[0-9]
   externalIPs: true
   loadBalancerIPs: true
 
