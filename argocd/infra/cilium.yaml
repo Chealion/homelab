@@ -13,7 +13,8 @@ spec:
   sources:
     - chart: cilium
       repoURL: https://helm.cilium.io/
-      targetRevision: 1.18.4
+      # 1.18.4 and 1.18.5 - 43254 needs to land first
+      targetRevision: 1.18.3
       helm:
         valueFiles:
         - $values/argocd/values/cilium.yaml
