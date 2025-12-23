@@ -21,19 +21,252 @@ grafana: # Line 1225
     passwordKey: admin-password
   ingress:
     enabled: false
+  serviceMonitor:
+    enabled: true
+    scrapeTimeout: 15s
+    relabelings:
+      - sourceLabels: [__meta_kubernetes_pod_node_name]
+        separator: ;
+        regex: ^(.*)$
+        targetLabel: nodename
+        replacement: $1
+        action: replace
+  # Loading other dashboards from config_maps labelled grafana_dashboard
+  sidecar:
+    image:
+      repository: kiwigrid/k8s-sidecar
+      tag: 1.25.2
+    datasources:
+      defaultDatasourceEnabled: false
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      labelValue: "1"
+      folder: /tmp/dashboards
+      folderAnnotation: grafana_folder
+      provider:
+        allowUiUpdates: true
+        foldersFromFilesStructure: true
 
 kubeEtcd: # Line 2125
   enabled: false # Needs tweaks for Talos
 
+kubelet:
+  serviceMonitor:
+    cAdvisorMetricRelabelings:
+      # Drop less useful container CPU metrics.
+      - sourceLabels: [__name__]
+        action: drop
+        regex: 'container_cpu_(cfs_throttled_seconds_total|load_average_10s|system_seconds_total|user_seconds_total)'
+      # Drop less useful container / always zero filesystem metrics.
+      - sourceLabels: [__name__]
+        action: drop
+        regex: 'container_fs_(io_current|io_time_seconds_total|io_time_weighted_seconds_total|reads_merged_total|sector_reads_total|sector_writes_total|writes_merged_total)'
+      # Drop less useful / always zero container memory metrics.
+      - sourceLabels: [__name__]
+        action: drop
+        regex: 'container_memory_(mapped_file|swap)'
+      # Drop less useful container process metrics.
+      - sourceLabels: [__name__]
+        action: drop
+        regex: 'container_(file_descriptors|tasks_state|threads_max)'
+      # Drop container spec metrics that overlap with kube-state-metrics.
+      - sourceLabels: [__name__]
+        action: drop
+        regex: 'container_spec.*'
+      # Drop cgroup metrics with no pod.
+      - sourceLabels: [id, pod]
+        action: drop
+        regex: '.+;'
+    cAdvisorRelabelings:
+      - action: replace
+        sourceLabels: [__metrics_path__]
+        targetLabel: metrics_path
+      # Duplicate node to nodename for consistency
+      - sourceLabels: [node]
+        separator: ;
+        regex: ^(.*)$
+        targetLabel: nodename
+        replacement: $1
+        action: replace
+      # Grafana uses the node labels on the up job to populate the instance variables
+      # Kubelet checks don't go over the overlay and go to the interface IP
+      # So change instance to DNS name and Grafana will sort itself out
+      - sourceLabels: [nodename]
+        separator: ;
+        regex: ^(.*)$
+        targetLabel: instance
+        replacement: ${1}:10250
+        action: replace
+    probesMetricRelabelings:
+      - sourceLabels: [__meta_kubernetes_pod_node_name]
+        separator: ;
+        regex: ^(.*)$
+        targetLabel: nodename
+        replacement: $1
+        action: replace
+    probesRelabelings:
+      - action: replace
+        sourceLabels: [__metrics_path__]
+        targetLabel: metrics_path
+      # Duplicate node to nodename for consistency
+      - sourceLabels: [node]
+        separator: ;
+        regex: ^(.*)$
+        targetLabel: nodename
+        replacement: $1
+        action: replace
+    resourceRelabelings:
+      - action: replace
+        sourceLabels: [__metrics_path__]
+        targetLabel: metrics_path
+      # Duplicate node to nodename for consistency
+      - sourceLabels: [node]
+        separator: ;
+        regex: ^(.*)$
+        targetLabel: nodename
+        replacement: $1
+        action: replace
+    relabelings:
+      - action: replace
+        sourceLabels: [__metrics_path__]
+        targetLabel: metrics_path
+      # Duplicate node to nodename for consistency
+      - sourceLabels: [node]
+        separator: ;
+        regex: ^(.*)$
+        targetLabel: nodename
+        replacement: $1
+        action: replace
+      # Grafana uses the node labels on the up job to populate the instance variables
+      # Kubelet checks don't go over the overlay and go to the interface IP
+      # So change instance to DNS name and Grafana will sort itself out
+      - sourceLabels: [nodename]
+        separator: ;
+        regex: ^(.*)$
+        targetLabel: instance
+        replacement: ${1}:10250
+        action: replace
+
+kubeControllerManager:
+  serviceMonitor:
+    relabelings:
+      - sourceLabels: [__meta_kubernetes_pod_node_name]
+        separator: ;
+        regex: ^(.*)$
+        targetLabel: nodename
+        replacement: $1
+        action: replace
+      # Grafana uses the node labels on the up job to populate the instance variables
+      # Kube control manager checks don't go over the overlay and go to the interface IP
+      # So change instance to DNS name and Grafana will sort itself out
+      - sourceLabels: [nodename]
+        separator: ;
+        regex: ^(.*)$
+        targetLabel: instance
+        replacement: $1:10257
+        action: replace
+
+coreDns:
+  serviceMonitor:
+    #Make it so instance == nodename
+    metricRelabelings:
+      - sourceLabels: [nodename]
+        targetLabel: instance
+        action: replace
+    relabelings:
+      - sourceLabels: [__meta_kubernetes_pod_node_name]
+        separator: ;
+        regex: ^(.*)$
+        targetLabel: nodename
+        replacement: $1
+        action: replace
+
+kubeScheduler:
+  serviceMonitor:
+    relabelings:
+      - sourceLabels: [__meta_kubernetes_pod_node_name]
+        separator: ;
+        regex: ^(.*)$
+        targetLabel: nodename
+        replacement: $1
+        action: replace
+      # Grafana uses the node labels on the up job to populate the instance variables
+      # Kube scheduler checks don't go over the overlay and go to the interface IP
+      # So change instance to DNS name and Grafana will sort itself out
+      - sourceLabels: [nodename]
+        separator: ;
+        regex: ^(.*)$
+        targetLabel: instance
+        replacement: $1:10259
+        action: replace
+
 kubeProxy:
-  enabled: false # Cilium
+  enabled: false
+
+kubeApiServer:
+  serviceMonitor:
+    metricRelabelings:
+      - action: drop
+        regex: apiserver_request_duration_seconds_bucket;(0.15|0.2|0.3|0.35|0.4|0.45|0.6|0.7|0.8|0.9|1.25|1.5|1.75|2|3|3.5|4|4.5|6|7|8|9|15|25|40|50)
+        sourceLabels:
+          - __name__
+          - le
+      #Make it so instance == nodename
+      - sourceLabels: [nodename]
+        targetLabel: instance
+        action: replace
+    relabelings:
+      - sourceLabels: [__meta_kubernetes_pod_node_name]
+        separator: ;
+        regex: ^(.*)$
+        targetLabel: nodename
+        replacement: $1
 
 prometheus-node-exporter: # Line 2502
-  enabled: false
+  enabled: true
+  prometheus:
+    monitor:
+      #Make it so instance == nodename
+      metricRelabelings:
+        - sourceLabels: [nodename]
+          targetLabel: instance
+          action: replace
+      relabelings:
+        # Change node exporter metrics to set their hostname as the instance
+        - sourceLabels: [__meta_kubernetes_pod_node_name]
+          action: replace
+          targetLabel: instance
 
 prometheus: # Line 3369
   enabled: true
   service:
     ipDualStack:
       enabled: false
+  serviceMonitor:
+    #Make it so instance == nodename
+    metricRelabelings:
+      - sourceLabels: [pod]
+        targetLabel: instance
+        action: replace
+    relabelings:
+      - sourceLabels: [__meta_kubernetes_pod_node_name]
+        separator: ;
+        regex: ^(.*)$
+        targetLabel: nodename
+        replacement: $1
+        action: replace
+
+  prometheusSpec:
+    persistentVolumeClaimRetentionPolicy:
+      whenDeleted: Retain
+
+    scrapeInterval: 15s
+    scrapeTimeout: 15s
+
+    # Grab all serviceMonitors and avoid helm setting values automatically
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    probeSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
 
