@@ -13,7 +13,7 @@ spec:
   sources:
     - path: deploy/chart/local-path-provisioner
       repoURL: https://github.com/rancher/local-path-provisioner
-      targetRevision: v0.0.32
+      targetRevision: v0.0.33
       helm:
         valueFiles:
         - $values/argocd/values/local-path-provisioner.yaml
