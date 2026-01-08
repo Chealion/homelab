@@ -61,7 +61,6 @@ grafana: # Line 1225
   sidecar:
     image:
       repository: kiwigrid/k8s-sidecar
-      tag: 1.25.2
     datasources:
       defaultDatasourceEnabled: false
     dashboards:
@@ -251,18 +250,7 @@ kubeApiServer:
 
 prometheus-node-exporter: # Line 2502
   enabled: true
-  prometheus:
-    monitor:
-      #Make it so instance == nodename
-      metricRelabelings:
-        - sourceLabels: [nodename]
-          targetLabel: instance
-          action: replace
-      relabelings:
-        # Change node exporter metrics to set their hostname as the instance
-        - sourceLabels: [__meta_kubernetes_pod_node_name]
-          action: replace
-          targetLabel: instance
+  # May need relabelling?
 
 prometheus: # Line 3369
   enabled: true
