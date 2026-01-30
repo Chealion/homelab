@@ -11,7 +11,7 @@ spec:
       # https://github.com/renovatebot/helm-charts/tree/main/charts/renovate
     - chart: renovate
       repoURL: https://docs.renovatebot.com/helm-charts
-      targetRevision: 45.88.1
+      targetRevision: 46.0.3
       helm:
         valueFiles:
         - $values/argocd/values/renovate.yaml
