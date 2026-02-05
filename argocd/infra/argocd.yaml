@@ -10,7 +10,7 @@ spec:
   sources:
     - chart: argo-cd
       repoURL: https://argoproj.github.io/argo-helm
-      targetRevision: 9.4.0  # v3.2.5
+      targetRevision: 9.4.0  # v3.3.0
       helm:
         valueFiles:
         - $values/argocd/values/argocd.yaml
@@ -27,3 +27,4 @@ spec:
       allowEmpty: false # https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/#automatic-pruning-with-allow-empty-v18
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true
