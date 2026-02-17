@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-4.6.2/charts/other/app-template/values.schema.json
+controllers:
+  unpoller:
+    containers:
+      unpoller:
+        image:
+          repository: ghcr.io/unpoller/unpoller
+          tag: v2.33.0
+        env:
+          TZ: America/Edmonton
+          UP_UNIFI_DEFAULT_ROLE: Monitoring
+          UP_UNIFI_DEFAULT_VERIFY_SSL: true
+          UP_INFLUXDB_DISABLE: true
+          UP_LOKI_DISABLE: true
+          UP_UNIFI_DEFAULT_URL: "https://192.168.8.1"
+          UP_UNIFI_DEFAULT_VERIFY_SSL: false
+        envFrom:
+          - secretRef:
+              name: unpoller-secret
+        probes:
+          liveness:
+            enabled: true
+          readiness:
+            enabled: true
+        resources:
+          requests:
+            cpu: 10m
+          limits:
+            memory: 64Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities: { drop: ["ALL"] }
+
+service:
+  unpoller:
+    controller: unpoller
+    ports:
+      http:
+        port: 9130
+
+serviceMonitor:
+  unpoller:
+    serviceName: unpoller
+    endpoints:
+      - port: http
+        path: /metrics
+        interval: 30s
+        scrapeTimeout: 10s

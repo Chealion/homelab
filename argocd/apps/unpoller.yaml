@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: unpoller
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "60"
+    argocd.argoproj.io/compare-options: ServerSideDiff=true # https://github.com/argoproj/argo-cd/issues/19038
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - chart: app-template
+      repoURL: https://bjw-s-labs.github.io/helm-charts
+      targetRevision: 4.6.2
+      helm:
+        releaseName: unpoller
+        parameters: []
+        valueFiles:
+          - $values/argocd/values/unpoller.yaml
+    - repoURL: https://github.com/chealion/homelab
+      targetRevision: main
+      ref: values
+  destination:
+    name: in-cluster
+    namespace: unpoller
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - PrunePropogationPolicy=foreground
+      - PruneLast=true
+      - CreateNamespace=true
