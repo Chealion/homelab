@@ -1,0 +1,7 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: readeck
+  labels:
+    shared-gateway-access: "true"
