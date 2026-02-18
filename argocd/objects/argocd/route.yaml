@@ -12,18 +12,18 @@ spec:
       sectionName: argocd-listener
       namespace: kube-system
   rules:
-  - backendRefs:
-    - name: argocd-server
-      port: 80
-    matches:
-      - path:
-          type: PathPrefix
-          value: /
+    - backendRefs:
+        - name: argocd-server
+          port: 80
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: argocd-test-route
+  name: argocd-test-node-route
   namespace: argocd
 spec:
   hostnames:
@@ -33,9 +33,51 @@ spec:
       sectionName: test-listener
       namespace: kube-system
   rules:
-  - backendRefs:
-    - name: argocd-server
-      port: 80
-    matches:
-      - path:
-          type: PathPrefix
+    - backendRefs:
+        - name: argocd-server
+          port: 80
+      matches:
+        - path:
+            type: PathPrefix
+
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: argocd-test-external-route
+  namespace: argocd
+spec:
+  hostnames:
+    - test.k8s.notsodefault.ca
+  parentRefs:
+    - name: l2-external-gateway
+      sectionName: test-listener
+      namespace: kube-system
+  rules:
+    - backendRefs:
+        - name: argocd-server
+          port: 80
+      matches:
+        - path:
+            type: PathPrefix
+
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: argocd-test-internal-route
+  namespace: argocd
+spec:
+  hostnames:
+    - test.k8s.notsodefault.ca
+  parentRefs:
+    - name: l2-internal-gateway
+      sectionName: test-listener
+      namespace: kube-system
+  rules:
+    - backendRefs:
+        - name: argocd-server
+          port: 80
+      matches:
+        - path:
+            type: PathPrefix
