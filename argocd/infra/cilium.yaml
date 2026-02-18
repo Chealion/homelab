@@ -13,11 +13,10 @@ spec:
   sources:
     - chart: cilium
       repoURL: https://helm.cilium.io/
-      # 1.18.4 and 1.18.5 - 43254 needs to land first
-      targetRevision: 1.19.0
+      targetRevision: 1.19.1
       helm:
         valueFiles:
-        - $values/argocd/values/cilium.yaml
+          - $values/argocd/values/cilium.yaml
     - repoURL: https://github.com/chealion/homelab
       targetRevision: main
       ref: values
