@@ -92,10 +92,74 @@ spec:
     labels:
       ipam: homelab-l2
   listeners:
-    - protocol: HTTP
+    - protocol: HTTPS
       name: test-listener
       hostname: test.k8s.notsodefault.ca
-      port: 80
+      port: 443
       allowedRoutes:
         namespaces:
           from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: test-listener-cert
+
+    - protocol: HTTPS
+      port: 443
+      name: argocd-listener
+      hostname: argo.k8s.notsodefault.ca
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              shared-gateway-access: "true"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: argo-listener-cert
+
+    - protocol: HTTPS
+      port: 443
+      name: grafana-listener
+      hostname: grafana.k8s.notsodefault.ca
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              shared-gateway-access: "true"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: grafana-listener-cert
+
+    - protocol: HTTPS
+      port: 443
+      name: prometheus-listener
+      hostname: prometheus.k8s.notsodefault.ca
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              shared-gateway-access: "true"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: prometheus-listener-cert
+
+    - protocol: HTTPS
+      port: 443
+      name: readeck-listener
+      hostname: readeck.k8s.notsodefault.ca
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              shared-gateway-access: "true"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: readeck-listener-cert
