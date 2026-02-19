@@ -2,7 +2,6 @@
 gatewayNamespace: kube-system
 sources:
   - gateway-httproute
-
 provider:
   name: cloudflare
 env:

@@ -8,7 +8,7 @@ spec:
   hostnames:
     - argo.k8s.notsodefault.ca
   parentRefs:
-    - name: cluster-gateway
+    - name: l2-gateway
       sectionName: argocd-listener
       namespace: kube-system
   rules:
@@ -19,6 +19,7 @@ spec:
         - path:
             type: PathPrefix
             value: /
+
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -27,31 +28,10 @@ metadata:
   namespace: argocd
 spec:
   hostnames:
-    - test.k8s.notsodefault.ca
+    - host.k8s.notsodefault.ca
   parentRefs:
     - name: cluster-gateway
-      sectionName: test-listener
-      namespace: kube-system
-  rules:
-    - backendRefs:
-        - name: argocd-server
-          port: 80
-      matches:
-        - path:
-            type: PathPrefix
-
----
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: argocd-test-l2-route
-  namespace: argocd
-spec:
-  hostnames:
-    - test.k8s.notsodefault.ca
-  parentRefs:
-    - name: l2-gateway
-      sectionName: test-listener
+      sectionName: test-host-listener
       namespace: kube-system
   rules:
     - backendRefs:

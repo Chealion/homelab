@@ -50,7 +50,7 @@ service:
 route:
   main:
     parentRefs:
-      - name: cluster-gateway
+      - name: l2-gateway
         namespace: kube-system
         sectionName: readeck-listener
     hostnames:
