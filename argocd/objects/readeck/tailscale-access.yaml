@@ -1,0 +1,16 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: readeck-tailscale
+spec:
+  defaultBackend:
+    service:
+      name: readeck
+      port:
+        number: 8000
+  ingressClassName: tailscale
+  tls:
+    - hosts:
+        # readeck.taila8d0e.ts.net
+        - readeck
