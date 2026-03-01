@@ -1,0 +1,22 @@
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: authentik
+spec:
+  parentRefs:
+    - name: l2-gateway
+      namespace: kube-system
+      sectionName: auth-listener
+  hostnames:
+    - auth.k8s.notsodefault.ca
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - kind: Service
+          name: authentik-server
+          namespace: authentik
+          port: 80
