@@ -1,0 +1,60 @@
+---
+global:
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+  env:
+    - name: AUTHENTIK_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: authentik-secret-key
+          key: secret_key
+    - name: AUTHENTIK_POSTGRESQL__PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: authentik-db-user
+          key: password
+
+authentik:
+  postgresql:
+    host: authentik-db-cluster-rw.authentik.svc.notsodefault.ca
+    name: authentik
+    user: authentik-db-user
+
+postgresql:
+  enabled: false
+
+redis:
+  enabled: true
+
+server:
+  containerSecurityContext:
+    runAsNonRoot: true
+    #   readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    seccompProfile:
+      type: RuntimeDefault
+    capabilities:
+      drop:
+        - ALL
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+
+worker:
+  containerSecurityContext:
+    runAsNonRoot: true
+    # readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    seccompProfile:
+      type: RuntimeDefault
+    capabilities:
+      drop:
+        - ALL
+
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
