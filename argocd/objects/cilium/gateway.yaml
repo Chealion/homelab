@@ -26,6 +26,8 @@ kind: Gateway
 metadata:
   name: l2-gateway
   namespace: kube-system
+  annotations:
+    cert-manager.io/cluster-issuer: cert-manager-cluster-issuer
 spec:
   gatewayClassName: l2-gateway-class
   infrastructure:
