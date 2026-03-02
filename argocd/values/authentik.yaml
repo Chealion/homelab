@@ -18,7 +18,7 @@ global:
 
 authentik:
   postgresql:
-    host: authentik-db-cluster-rw.authentik.svc.notsodefault.ca
+    host: authentik-db-cluster-rw.authentik.svc.cluster.local
     name: authentik
     user: authentik-db-user
 
