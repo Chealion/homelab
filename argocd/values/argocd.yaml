@@ -4,6 +4,26 @@ global:
 configs:
   params:
     server.insecure: true
+  cm:
+    dex.config: |
+      connectors:
+      - type: oidc
+        name: authentik
+        id: authentik
+        config:
+          issuer: https://auth.k8s.notsodefault.ca/application/o/argo-cd/
+          clientID: "$dex.authentik.clientId"
+          clientSecret: "$dex.authentik.clientSecret"
+          insecureEnableGroups: true
+          scopes:
+            - openid
+            - profile
+            - email
+rbac:
+    scopes: "[groups, email]"
+    policy.csv: |
+      p, role:none, *, *, */*, deny
+      g, Argo CD Admin, role: admin
 controller:
   metrics:
     enabled: true
@@ -13,8 +33,6 @@ redis:
 server:
   metrics:
     enabled: true
-# ingress:
-#   enabled: true
 repoServer:
   metrics:
     enabled: true
