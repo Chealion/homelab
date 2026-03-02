@@ -2,8 +2,6 @@
 global:
   domain: argo.k8s.notsodefault.ca
 configs:
-  secret:
-    createSecret: true
   params:
     server.insecure: true
   cm:
