@@ -2,6 +2,9 @@
 k8sServiceHost: localhost # talos' KubePrism
 k8sServicePort: 7445
 kubeProxyReplacement: true # use Cilium
+bpf:
+  hostLegacyRouting: true
+  masquerade: true
 ipv6:
   enabled: true
 gatewayAPI:
