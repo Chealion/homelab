@@ -28,3 +28,9 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
+  ignoreDifferences:
+    - kind: Secret
+      name: argocd-secret
+      namespace: argocd
+      jsonPointers:
+        - /metadata/annotations
