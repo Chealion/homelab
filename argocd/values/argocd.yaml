@@ -19,11 +19,11 @@ configs:
             - openid
             - profile
             - email
-rbac:
+  rbac:
     scopes: "[groups, email]"
     policy.csv: |
       p, role:none, *, *, */*, deny
-      g, Argo CD Admin, role: admin
+      g, Argo CD Admin, role:admin
 controller:
   metrics:
     enabled: true
