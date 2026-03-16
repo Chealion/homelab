@@ -12,6 +12,8 @@ controllers:
           READECK_LOG_LEVEL: info
           READECK_LOG_FORMAT: text
           READECK_ALLOWED_HOSTS: readeck.k8s.notsodefault.ca
+          READECK_AUTH_FORWARDED_ENABLED: true
+          READECK_AUTH_FORWARDED_HEADER_USER: X-authentik-username
         probes:
           liveness: &probes
             enabled: true
