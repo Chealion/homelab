@@ -13,6 +13,13 @@ spec:
           name: onepassword-eso
           namespace: external-secrets
           key: token
+      cache:
+        # Defaults but can be tweaked to reduce API calls
+        # Reality is set everything to OnChange refreshPolicy
+        # 1000 calls/day is easy to blow through.
+        # kubectl annotate es <name> force-sync=$(date +%s) --overwrite is your friend
+        ttl: 5m
+        maxSize: 100
 
 ---
 apiVersion: external-secrets.io/v1
