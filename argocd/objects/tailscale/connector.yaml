@@ -7,5 +7,4 @@ spec:
   subnetRouter:
     advertiseRoutes:
       # Advertise k8s services
-      #- 192.168.8.248/29
-      - 192.168.8.0/24
+      - 192.168.8.248/29
