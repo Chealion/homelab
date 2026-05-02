@@ -18,7 +18,7 @@ spec:
         # Reality is set everything to OnChange refreshPolicy
         # 1000 calls/day is easy to blow through.
         # kubectl annotate es <name> force-sync=$(date +%s) --overwrite is your friend
-        ttl: 5m
+        ttl: 15m
         maxSize: 100
 
 ---
