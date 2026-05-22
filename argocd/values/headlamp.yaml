@@ -1,0 +1,24 @@
+ingress:
+  enabled: false
+
+httpRoute:
+  enabled: true
+  parentRefs:
+    - name: l2-gateway
+      namespace: kube-system
+      sectionName: headlamp-listener
+  hostnames:
+    - headlamp.k8s.notsodefault.ca
+
+# Need to hook up K8s to Authentik for RBAC before this works
+config:
+  oidc:
+    secret:
+      create: false
+      name: "headlamp-oidc-secret"
+    issuerURL: "https://auth.k8s.notsodefault.ca/application/o/headlamp/"
+    scopes: "openid,profile,email,groups"
+
+#serviceAccount:
+#  create: true
+#  name: headlamp-admin

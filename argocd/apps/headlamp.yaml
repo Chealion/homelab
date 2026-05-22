@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: headlamp
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "160"
+    argocd.argoproj.io/compare-options: ServerSideDiff=true # https://github.com/argoproj/argo-cd/issues/19038
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - chart: headlamp
+      repoURL: https://kubernetes-sigs.github.io/headlamp/
+      targetRevision: 0.42.0
+      helm:
+        releaseName: headlamp
+        parameters: []
+        valueFiles:
+          - $values/argocd/values/headlamp.yaml
+    - repoURL: https://github.com/chealion/homelab
+      targetRevision: main
+      ref: values
+  destination:
+    name: in-cluster
+    namespace: headlamp
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

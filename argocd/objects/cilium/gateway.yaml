@@ -121,3 +121,18 @@ spec:
         mode: Terminate
         certificateRefs:
           - name: readeck-listener-cert
+
+    - protocol: HTTPS
+      port: 443
+      name: headlamp-listener
+      hostname: headlamp.k8s.notsodefault.ca
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              shared-gateway-access: "true"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: headlamp-listener-cert
