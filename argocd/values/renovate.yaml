@@ -1,5 +1,5 @@
 cronjob:
-  schedule: '0 7 * * *' # 7 AM every day
+  schedule: "0 7 * * *" # 7 AM every day
 
 renovate:
   # https://docs.renovatebot.com/self-hosted-configuration
@@ -7,6 +7,16 @@ renovate:
     {
       "platform": "github",
       "repositories": ["chealion/homelab"],
+      "customManagers": [
+        {
+          "customType": "regex",
+          "fileMatch": ["argocd/values/.+\\.yaml$"],
+          "matchStrings": [
+            "repository: (?<registryUrl>codeberg\\.org)/(?<depName>[^\\n]+)\\n\\s+tag: (?<currentValue>[^\\n]+)"
+          ],
+          "datasourceTemplate": "docker"
+        }
+      ]
     }
 
 envList:
