@@ -4,7 +4,8 @@ controllers:
       app:
         image:
           repository: codeberg.org/readeck/readeck
-          tag: 0.21.6 # renovate: datasource=docker depName=readeck/readeck registryUrl=https://codeberg.org
+          # renovate: datasource=docker depName=readeck/readeck registryUrl=https://codeberg.org
+          tag: 0.21.6
           pullPolicy: IfNotPresent
         env:
           READECK_SERVER_HOST: "0.0.0.0"
