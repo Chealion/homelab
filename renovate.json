@@ -1,37 +1,23 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "enabledManagers": ["argocd", "kubernetes"],
-  "extends": [
-    "config:recommended",
-    ":disableDependencyDashboard"
-  ],
-  "assignees": [
-    "chealion"
-  ],
+  "enabledManagers": ["argocd", "kubernetes", "regex"],
+  "extends": ["config:recommended", ":disableDependencyDashboard"],
+  "assignees": ["chealion"],
   "prHourlyLimit": 10,
-  "ignorePaths": [
-    "archive/",
-    "examples/"
-  ],
+  "ignorePaths": ["archive/", "examples/"],
   "kubernetes": {
-    "managerFilePatterns": [
-      "/argocd/.+\\.ya?ml$/"
-    ]
+    "managerFilePatterns": ["/argocd/.+\\.ya?ml$/"]
   },
   "argocd": {
-    "managerFilePatterns": [
-      "/argocd/.+\\.ya?ml$/"
-    ]
+    "managerFilePatterns": ["/argocd/.+\\.ya?ml$/"]
   },
   "customManagers": [
     {
       "customType": "regex",
       "description": "Process various dependencies",
-      "managerFilePatterns": [
-        "/argocd/.+\\.ya?ml$/"
-      ],
+      "managerFilePatterns": ["/argocd/.+\\.ya?ml$/"],
       "matchStrings": [
-        "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*=?))?\n .*: (?<currentValue>.*=?)"
+        "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?( registryUrl=(?<registryUrl>.*?))?\n .*: (?<currentValue>.*=?)"
       ],
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
     }

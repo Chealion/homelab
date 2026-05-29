@@ -5,6 +5,7 @@ controllers:
       unpoller:
         image:
           repository: ghcr.io/unpoller/unpoller
+          # renovate: datasource=docker depName=unpoller/unpoller registryUrl=https://ghcr.io
           tag: v2.33.0
         env:
           TZ: America/Edmonton
