@@ -1,5 +1,5 @@
 cronjob:
-  schedule: '0 7 * * *' # 7 AM every day
+  schedule: "0 7 * * *" # 7 AM every day
 
 renovate:
   # https://docs.renovatebot.com/self-hosted-configuration
@@ -11,7 +11,7 @@ renovate:
 
 envList:
   - name: LOG_LEVEL
-    value: info
+    value: debug
   - name: RENOVATE_TOKEN
     valueFrom:
       secretKeyRef:
