@@ -6,7 +6,7 @@ controllers:
         image:
           repository: ghcr.io/unpoller/unpoller
           # renovate: datasource=docker depName=unpoller/unpoller registryUrl=https://ghcr.io
-          tag: v2.33.0
+          tag: v3.2.0
         env:
           TZ: America/Edmonton
           UP_UNIFI_DEFAULT_ROLE: Monitoring
