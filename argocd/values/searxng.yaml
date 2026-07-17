@@ -1,0 +1,123 @@
+controllers:
+  searxng:
+    pod:
+      securityContext:
+        fsGroup: 977
+        fsGroupChangePolicy: "OnRootMismatch"
+        runAsGroup: 977
+        runAsUser: 977
+    containers:
+      main:
+        image:
+          repository: ghcr.io/searxng/searxng
+          # renovate: datasource=docker depName=searxng/searxng registryUrl=https://ghcr.io
+          tag: latest
+          pullPolicy: IfNotPresent
+        env:
+          SEARXNG_BASE_URL: "https://searxng.k8s.notsodefault.ca"
+          SEARXNG_PORT: &httpPort 8080
+          SEARXNG_VALKEY_URL: "redis://127.0.0.1:6379/0"
+        envFrom:
+          - secretRef:
+              name: searxng-secret
+        probes:
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /stats
+                port: *httpPort
+              initialDelaySeconds: 0
+              periodSeconds: 10
+              timeoutSeconds: 1
+              failureThreshold: 3
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /stats
+                port: *httpPort
+              initialDelaySeconds: 0
+              periodSeconds: 10
+              timeoutSeconds: 1
+              failureThreshold: 3
+        resources:
+          requests:
+            cpu: 10m
+            memory: 256Mi
+          limits:
+            memory: 1Gi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            add:
+              - CHOWN
+              - DAC_OVERRIDE
+              - SETGID
+              - SETUID
+            drop:
+              - ALL
+          readOnlyRootFilesystem: true
+
+      valkey:
+        image:
+          repository: docker.io/valkey/valkey
+          tag: 8.0-alpine
+        command: ["valkey-server", "--protected-mode", "no"]
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            memory: 128Mi
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 999
+          runAsGroup: 999
+          allowPrivilegeEscalation: false
+          capabilities: { drop: ["ALL"] }
+
+service:
+  app:
+    controller: searxng
+    ports:
+      http:
+        port: 8080
+
+route:
+  main:
+    parentRefs:
+      - name: l2-gateway
+        namespace: kube-system
+        sectionName: searxng-listener
+    hostnames:
+      - searxng.k8s.notsodefault.ca
+    rules:
+      - matches:
+          - path:
+              type: PathPrefix
+              value: /
+        backendRefs:
+          - kind: Service
+            port: 8080
+            name: searxng
+            namespace: searxng
+
+persistence:
+  config:
+    type: configMap
+    name: searxng-config
+    globalMounts:
+      - path: /etc/searxng/limiter.toml
+        subPath: limiter.toml
+        readOnly: true
+      - path: /etc/searxng/settings.yml
+        subPath: settings.yml
+        readOnly: true
+  tmpfs:
+    type: emptyDir
+    globalMounts:
+      - path: /tmp
+
