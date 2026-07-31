@@ -28,6 +28,7 @@ grafana: # Line 1225
     - natel-discrete-panel
     - pr0ps-trackmap-panel
     - vonage-status-panel
+    - grafana-clickhouse-datasource
   env:
     GF_ANALYTICS_CHECK_FOR_UPDATES: false
     GF_ANALYTICS_CHECK_FOR_PLUGIN_UPDATES: false
@@ -59,6 +60,41 @@ grafana: # Line 1225
       defaultMode: 0440
       mountPath: /etc/secrets/grafana-oauth
       readOnly: true
+    - name: clickhouse-grafana-credentials
+      secretName: clickhouse-grafana-credentials
+      defaultMode: 0440
+      mountPath: /etc/secrets/clickstack
+      readOnly: true
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+        - name: 'clickstack-dashboards'
+          orgId: 1
+          folder: 'ClickStack'
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/clickstack-dashboards
+        - name: 'default'
+          orgId: 1
+          folder: 'General'
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/default
+  dashboards:
+    clickstack-dashboards:
+      clickhouse-prometheus:
+        gnetId: 14192
+        revision: 1
+        datasource: Prometheus
+      clickhouse-native:
+        gnetId: 23589
+        revision: 1
+        datasource: ClickHouse
   datasources:
     datasources.yaml:
       apiVersion: 1
@@ -70,6 +106,17 @@ grafana: # Line 1225
           isDefault: true
           jsonData:
             prometheusType: Prometheus
+        - name: ClickHouse
+          type: grafana-clickhouse-datasource
+          access: proxy
+          url: http://clickstack-clickhouse-clickhouse-headless.clickstack.svc.cluster.local:8123
+          jsonData:
+            defaultDatabase: default
+            port: 8123
+            server: clickstack-clickhouse-clickhouse-headless.clickstack.svc.cluster.local
+            username: app
+          secureJsonData:
+            password: $__file{/etc/secrets/clickstack/password}
   serviceMonitor:
     enabled: true
     scrapeTimeout: 15s

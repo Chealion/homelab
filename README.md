@@ -36,3 +36,6 @@ Two app of apps to create all the applications in Argo CD. Values are stored in 
 
 * 1Password API limits
 * `kubectl annotate es <name> force-sync=$(date +%s) --overwrite -n <namespace>`
+
+## Credential Rotation
+* ClickStack - MongoDB: Rotates when secret is updated. clickstack-app needs to be restarted to update connection strings.

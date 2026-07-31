@@ -1,0 +1,47 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: clickstack
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "160"
+    argocd.argoproj.io/compare-options: ServerSideDiff=true # https://github.com/argoproj/argo-cd/issues/19038
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  ignoreDifferences:
+    - group: ""
+      kind: Secret
+      name: clickstack-secret
+      jsonPointers:
+        - /data
+        - /metadata/annotations/argocd.argoproj.io~1tracking-id
+    - group: ""
+      kind: Secret
+      name: clickstack-mongodb-password
+      jsonPointers:
+        - /data
+        - /metadata/annotations/argocd.argoproj.io~1tracking-id
+  project: default
+  sources:
+    - chart: clickstack
+      repoURL: https://clickhouse.github.io/ClickStack-helm-charts
+      targetRevision: 3.0.1
+      helm:
+        releaseName: clickstack
+        valueFiles:
+          - $values/argocd/values/clickstack.yaml
+    - repoURL: https://github.com/chealion/homelab
+      targetRevision: main
+      ref: values
+  destination:
+    name: in-cluster
+    namespace: clickstack
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true

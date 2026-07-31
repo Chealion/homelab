@@ -1,0 +1,150 @@
+# Values for clickstack
+
+# Define dummy secret keys so the Helm chart successfully compiles its internal templates.
+# The actual keys inside the resulting `clickstack-secret` will be safely merged
+# and overwritten at runtime by the ExternalSecrets operator from 1Password.
+hyperdx:
+  config:
+    FRONTEND_URL: "https://clickstack.k8s.notsodefault.ca"
+  secrets:
+    HYPERDX_API_KEY: "dummy-api-key-do-not-change"
+    CLICKHOUSE_PASSWORD: "dummy-clickhouse-password-do-not-change"
+    CLICKHOUSE_APP_PASSWORD: "dummy-clickhouse-app-password-do-not-change"
+    MONGODB_PASSWORD: "dummy-mongodb-password-do-not-change"
+  deployment:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        memory: 512Mi
+
+clickhouse:
+  enabled: true
+  keeper:
+    spec:
+      replicas: 1
+      dataVolumeClaimSpec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: local-path
+        resources:
+          requests:
+            storage: 5Gi
+      podTemplate:
+        securityContext:
+          fsGroup: 101
+          runAsGroup: 101
+          runAsNonRoot: true
+          runAsUser: 101
+          seccompProfile:
+            type: RuntimeDefault
+      # Customize Keeper container template to drop capabilities and pass Baseline PSS
+      containerTemplate:
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+  cluster:
+    spec:
+      podTemplate:
+        securityContext:
+          fsGroup: 101
+          runAsGroup: 101
+          runAsNonRoot: true
+          runAsUser: 101
+          seccompProfile:
+            type: RuntimeDefault
+      containerTemplate:
+        image:
+          repository: clickhouse/clickhouse-server
+          tag: "25.7-alpine"
+        resources:
+          requests:
+            cpu: 250m
+            memory: 1Gi
+          limits:
+            memory: 2Gi
+        # Inject passwords as environment variables from the ExternalSecret `clickstack-secret`
+        env:
+          - name: CLICKHOUSE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: clickstack-secret
+                key: CLICKHOUSE_PASSWORD
+          - name: CLICKHOUSE_APP_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: clickstack-secret
+                key: CLICKHOUSE_APP_PASSWORD
+        # Customize ClickHouse container template to drop capabilities and pass Baseline PSS
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+      replicas: 1
+      shards: 1
+      dataVolumeClaimSpec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: local-path
+        resources:
+          requests:
+            storage: 10Gi
+      # Configure ClickHouse to read passwords securely from the environment using @from_env
+      settings:
+        extraUsersConfig:
+          users:
+            app:
+              password:
+                - "@from_env": CLICKHOUSE_APP_PASSWORD
+              profile: default
+              grants:
+                - query: "GRANT SHOW ON *.*, SELECT ON system.*, SELECT ON default.*"
+            otelcollector:
+              password:
+                - "@from_env": CLICKHOUSE_PASSWORD
+              profile: default
+              grants:
+                - query: "GRANT SELECT,INSERT,CREATE,SHOW ON default.*"
+
+mongodb:
+  enabled: true
+  spec:
+    members: 1
+    type: ReplicaSet
+    version: "5.0.32"
+    # MongoDB Operator requires both data-volume and logs-volume claim templates to be defined
+    # to apply storageClass overrides successfully to all persistent volumes.
+    statefulSet:
+      spec:
+        volumeClaimTemplates:
+          - metadata:
+              name: data-volume
+            spec:
+              accessModes:
+                - ReadWriteOnce
+              storageClassName: local-path
+              resources:
+                requests:
+                  storage: 4Gi
+          - metadata:
+              name: logs-volume
+            spec:
+              accessModes:
+                - ReadWriteOnce
+              storageClassName: local-path
+              resources:
+                requests:
+                  storage: 2Gi
+
+otel-collector:
+  enabled: true
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      memory: 256Mi
