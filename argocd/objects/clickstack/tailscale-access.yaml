@@ -1,0 +1,17 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hyperdx-tailscale
+  namespace: clickstack
+spec:
+  defaultBackend:
+    service:
+      name: clickstack-hyperdx
+      port:
+        number: 3000
+  ingressClassName: tailscale
+  tls:
+    - hosts:
+      # hyperdx.tail<hash>.ts.net
+      - hyperdx

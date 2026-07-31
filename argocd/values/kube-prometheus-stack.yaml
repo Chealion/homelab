@@ -28,6 +28,7 @@ grafana: # Line 1225
     - natel-discrete-panel
     - pr0ps-trackmap-panel
     - vonage-status-panel
+    - grafana-clickhouse-datasource
   env:
     GF_ANALYTICS_CHECK_FOR_UPDATES: false
     GF_ANALYTICS_CHECK_FOR_PLUGIN_UPDATES: false
@@ -70,6 +71,17 @@ grafana: # Line 1225
           isDefault: true
           jsonData:
             prometheusType: Prometheus
+        - name: ClickHouse
+          type: grafana-clickhouse-datasource
+          access: proxy
+          url: http://clickstack-clickhouse.clickstack.svc.cluster.local:8123
+          jsonData:
+            defaultDatabase: default
+            port: 8123
+            server: clickstack-clickhouse.clickstack.svc.cluster.local
+            username: app
+          secureJsonData:
+            password: hyperdx
   serviceMonitor:
     enabled: true
     scrapeTimeout: 15s
