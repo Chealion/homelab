@@ -23,7 +23,7 @@ clickhouse:
   enabled: true
   keeper:
     spec:
-      replicas: 1
+      replicas: 3
       dataVolumeClaimSpec:
         accessModes:
           - ReadWriteOnce
