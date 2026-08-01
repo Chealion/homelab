@@ -13,7 +13,7 @@ spec:
   sources:
     - chart: clickstack-operators
       repoURL: https://clickhouse.github.io/ClickStack-helm-charts
-      targetRevision: 1.0.0
+      targetRevision: 1.1.0
       helm:
         releaseName: clickstack-operators
         valueFiles:
