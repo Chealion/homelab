@@ -111,8 +111,8 @@ grafana: # Line 1225
           access: proxy
           url: http://clickstack-clickhouse-clickhouse-headless.clickstack.svc.cluster.local:8123
           jsonData:
-            defaultDatabase: default
             port: 8123
+            protocol: "http"
             server: clickstack-clickhouse-clickhouse-headless.clickstack.svc.cluster.local
             username: app
           secureJsonData:
