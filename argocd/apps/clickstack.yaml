@@ -15,13 +15,13 @@ spec:
       name: clickstack-secret
       jsonPointers:
         - /data
-        - /metadata/annotations/argocd.argoproj.io~1tracking-id
+        - /metadata/annotations
     - group: ""
       kind: Secret
       name: clickstack-mongodb-password
       jsonPointers:
         - /data
-        - /metadata/annotations/argocd.argoproj.io~1tracking-id
+        - /metadata/annotations
   project: default
   sources:
     - chart: clickstack
