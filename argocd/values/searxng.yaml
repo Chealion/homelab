@@ -54,11 +54,6 @@ controllers:
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
-            add:
-              - CHOWN
-              - DAC_OVERRIDE
-              - SETGID
-              - SETUID
             drop:
               - ALL
           readOnlyRootFilesystem: true
