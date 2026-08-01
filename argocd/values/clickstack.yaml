@@ -32,10 +32,7 @@ clickhouse:
           requests:
             storage: 5Gi
       podTemplate:
-        securityContext:
-          runAsUser: 101
-          runAsGroup: 101
-          fsGroup: 101
+        securityContext: {}
         initContainers:
           - name: fix-permissions
             image: busybox:stable
@@ -45,23 +42,23 @@ clickhouse:
             volumeMounts:
               - name: clickhouse-storage-volume
                 mountPath: /mnt/data
-      # Customize Keeper container template to drop capabilities and pass Baseline PSS
       containerTemplate:
         securityContext:
-          runAsNonRoot: true
           allowPrivilegeEscalation: false
           seccompProfile:
             type: RuntimeDefault
           capabilities:
             drop:
               - ALL
+            add:
+              - CHOWN
+              - DAC_OVERRIDE
+              - SETGID
+              - SETUID
   cluster:
     spec:
       podTemplate:
-        securityContext:
-          runAsUser: 101
-          runAsGroup: 101
-          fsGroup: 101
+        securityContext: {}
         initContainers:
           - name: fix-permissions
             image: busybox:stable
@@ -93,15 +90,18 @@ clickhouse:
               secretKeyRef:
                 name: clickstack-secret
                 key: CLICKHOUSE_APP_PASSWORD
-        # Customize ClickHouse container template to drop capabilities and pass Baseline PSS
         securityContext:
-          runAsNonRoot: true
           allowPrivilegeEscalation: false
           seccompProfile:
             type: RuntimeDefault
           capabilities:
             drop:
               - ALL
+            add:
+              - CHOWN
+              - DAC_OVERRIDE
+              - SETGID
+              - SETUID
       replicas: 1
       shards: 1
       dataVolumeClaimSpec:
