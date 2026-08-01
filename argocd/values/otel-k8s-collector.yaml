@@ -1,0 +1,76 @@
+mode: daemonset
+
+image:
+  repository: otel/opentelemetry-collector-contrib
+  pullPolicy: IfNotPresent
+
+# Required to use the kubeletstats metrics from the Talos kubelet
+clusterRole:
+  create: true
+  rules:
+    - apiGroups: [""]
+      resources: ["nodes/proxy", "nodes/stats", "nodes"]
+      verbs: ["get", "list", "watch"]
+
+presets:
+  # Automatically sets up filelog receivers for /var/log/pods (compatible with Talos/containerd)
+  logsCollection:
+    enabled: true
+  # Collects standard host metrics (CPU, Memory, Disk)
+  hostMetrics:
+    enabled: true
+  # Injects k8s.pod.name, k8s.namespace.name, etc. into telemetry
+  kubernetesAttributes:
+    enabled: true
+    extractAllPodLabels: true
+    extractAllPodAnnotations: true
+  # Activates the kubeletstats receiver stub
+  kubeletMetrics:
+    enabled: true
+
+extraEnvs:
+  - name: HYPERDX_API_KEY
+    valueFrom:
+      secretKeyRef:
+        name: clickstack-ingest-key
+        key: HYPERDX_API_KEY
+
+config:
+  receivers:
+    kubeletstats:
+      collection_interval: 20s
+      auth_type: 'serviceAccount'
+      endpoint: '${env:K8S_NODE_NAME}:10250'
+      insecure_skip_verify: true
+      metrics:
+        k8s.pod.cpu_limit_utilization: { enabled: true }
+        k8s.pod.cpu_request_utilization: { enabled: true }
+        k8s.pod.memory_limit_utilization: { enabled: true }
+        k8s.pod.memory_request_utilization: { enabled: true }
+        k8s.pod.uptime: { enabled: true }
+        k8s.node.uptime: { enabled: true }
+        k8s.container.cpu_limit_utilization: { enabled: true }
+        k8s.container.cpu_request_utilization: { enabled: true }
+        k8s.container.memory_limit_utilization: { enabled: true }
+        k8s.container.memory_request_utilization: { enabled: true }
+        container.uptime: { enabled: true }
+
+  exporters:
+    otlphttp:
+      # Send directly to the internal clickstack collector service.
+      # Format: http://<release-name>-otel-collector.<namespace>.svc.cluster.local:<port>
+      endpoint: "http://clickstack-otel-collector.clickstack.svc.cluster.local:4318"
+      compression: gzip
+      headers:
+        authorization: "${env:HYPERDX_API_KEY}"
+
+  service:
+    pipelines:
+      logs:
+        receivers: [filelog]
+        processors: [k8sattributes, batch]
+        exporters: [otlphttp]
+      metrics:
+        receivers: [hostmetrics, kubeletstats]
+        processors: [k8sattributes, batch]
+        exporters: [otlphttp]

@@ -39,3 +39,4 @@ Two app of apps to create all the applications in Argo CD. Values are stored in 
 
 ## Credential Rotation
 * ClickStack - MongoDB: Rotates when secret is updated. clickstack-app needs to be restarted to update connection strings.
+* ClickStack - ClickHouse: Password is `clickhouse-app-password`. After rotation, the connection password must be manually updated in the HyperDX UI (Settings -> Connections).
