@@ -94,7 +94,9 @@ grafana: # Line 1225
       clickhouse-native:
         gnetId: 23589
         revision: 1
-        datasource: ClickHouse
+        datasource:
+          - name: DS_LOGS01-TEST
+            value: ClickHouse
   datasources:
     datasources.yaml:
       apiVersion: 1
