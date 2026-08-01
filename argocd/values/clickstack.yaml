@@ -33,16 +33,25 @@ clickhouse:
             storage: 5Gi
       podTemplate:
         securityContext:
-          fsGroup: 101
-          runAsGroup: 101
-          runAsNonRoot: true
           runAsUser: 101
-          seccompProfile:
-            type: RuntimeDefault
+          runAsGroup: 101
+          fsGroup: 101
+        initContainers:
+          - name: fix-permissions
+            image: busybox:stable
+            command: ["sh", "-c", "mkdir -p /mnt/data/var-lib-clickhouse /mnt/data/var-log-clickhouse && chown -R 101:101 /mnt/data"]
+            securityContext:
+              runAsUser: 0
+            volumeMounts:
+              - name: clickhouse-storage-volume
+                mountPath: /mnt/data
       # Customize Keeper container template to drop capabilities and pass Baseline PSS
       containerTemplate:
         securityContext:
+          runAsNonRoot: true
           allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
           capabilities:
             drop:
               - ALL
@@ -50,12 +59,18 @@ clickhouse:
     spec:
       podTemplate:
         securityContext:
-          fsGroup: 101
-          runAsGroup: 101
-          runAsNonRoot: true
           runAsUser: 101
-          seccompProfile:
-            type: RuntimeDefault
+          runAsGroup: 101
+          fsGroup: 101
+        initContainers:
+          - name: fix-permissions
+            image: busybox:stable
+            command: ["sh", "-c", "mkdir -p /mnt/data/var-lib-clickhouse /mnt/data/var-log-clickhouse && chown -R 101:101 /mnt/data"]
+            securityContext:
+              runAsUser: 0
+            volumeMounts:
+              - name: clickhouse-storage-volume
+                mountPath: /mnt/data
       containerTemplate:
         image:
           repository: clickhouse/clickhouse-server
@@ -80,7 +95,10 @@ clickhouse:
                 key: CLICKHOUSE_APP_PASSWORD
         # Customize ClickHouse container template to drop capabilities and pass Baseline PSS
         securityContext:
+          runAsNonRoot: true
           allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
           capabilities:
             drop:
               - ALL
