@@ -347,6 +347,17 @@ prometheus: # Line 3369
     persistentVolumeClaimRetentionPolicy:
       whenDeleted: Retain
 
+    retention: 15d
+
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 50Gi
+
     scrapeInterval: 15s
     scrapeTimeout: 15s
 
