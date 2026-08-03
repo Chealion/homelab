@@ -33,6 +33,7 @@ clickhouse:
             storage: 5Gi
       podTemplate:
         securityContext: {}
+        nodeHostnameKey: "kubernetes.io/hostname"
         initContainers:
           - name: fix-permissions
             image: busybox:stable
@@ -43,13 +44,6 @@ clickhouse:
               - name: clickhouse-storage-volume
                 mountPath: /mnt/data
       containerTemplate:
-        volumeMounts:
-          - name: clickhouse-storage-volume
-            mountPath: /var/lib/clickhouse
-            subPath: ""
-          - name: clickhouse-storage-volume
-            mountPath: /var/log/clickhouse-keeper
-            subPath: ""
         securityContext:
           allowPrivilegeEscalation: false
           seccompProfile:
@@ -97,13 +91,6 @@ clickhouse:
               secretKeyRef:
                 name: clickstack-secret
                 key: CLICKHOUSE_APP_PASSWORD
-        volumeMounts:
-          - name: clickhouse-storage-volume
-            mountPath: /var/lib/clickhouse
-            subPath: ""
-          - name: clickhouse-storage-volume
-            mountPath: /var/log/clickhouse-server
-            subPath: ""
         securityContext:
           allowPrivilegeEscalation: false
           seccompProfile:
