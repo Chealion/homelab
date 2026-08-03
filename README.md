@@ -2,11 +2,11 @@
 
 ## Cluster Setup
 
-* [Talos](https://talos.dev) cluster configured with [talhelper](https://github.com/budimanjojo/talhelper)
+* [Talos](https://talos.dev) cluster configured with [talhelper](https://github.com/budimanjojo/talhelper) - separate repository.
 
 ## Argo CD
 
-Two app of apps to create all the applications in Argo CD. Values are stored in one directory, and objects in a separate directory.
+Managed via two app-of-apps entrypoints: [`argocd_infra_applications.yaml`](./argocd/argocd_infra_applications.yaml) (Infra) and [`argocd_applications.yaml`](./argocd/argocd_applications.yaml) (Applications). Values are stored in [`argocd/values/`](./argocd/values/), and manifests/objects in [`argocd/objects/`](./argocd/objects/).
 
 ### Infra
 
@@ -25,17 +25,23 @@ Two app of apps to create all the applications in Argo CD. Values are stored in 
 
 ### Applications
 
+* [ClickStack](https://github.com/ClickHouse/ClickStack)
 * [Headlamp](https://github.com/headlamp/headlamp)
+* [OpenTelemetry Collector](https://opentelemetry.io/docs/collector/)
 * [Readeck](https://readeck.github.io/)
+* [SearXNG](https://github.com/searxng/searxng)
 * [Unpoller](https://unpoller.app/)
 
 ## Resources and Inspiration
 * https://github.com/joeypiccola/k8s_home
 
-## Annoyances
+## Operations & Troubleshooting
 
-* 1Password API limits
-* `kubectl annotate es <name> force-sync=$(date +%s) --overwrite -n <namespace>`
+* **1Password API Limits:** [1Password limits personal accounts to 1000 API calls in 24 hours](https://www.1password.dev/service-accounts/rate-limits) - hence why `OnChange` for all ESO objects. An automated check for changes for a single item once a minute is 1440 calls in a day.
+* **Force Sync External Secrets:** Run the following to manually force a sync:
+  ```bash
+  kubectl annotate es <name> force-sync=$(date +%s) --overwrite -n <namespace>
+  ```
 
 ## Credential Rotation
 * ClickStack - MongoDB: Rotates when secret is updated. clickstack-app needs to be restarted to update connection strings.
