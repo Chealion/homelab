@@ -44,5 +44,18 @@ Managed via two app-of-apps entrypoints: [`argocd_infra_applications.yaml`](./ar
   ```
 
 ## Credential Rotation
-* ClickStack - MongoDB: Rotates when secret is updated. clickstack-app needs to be restarted to update connection strings.
+* Argo CD - OIDC: OIDC creds from Authentik - restart `argocd-dex-server`
+* Authentik - PostgreSQL: DB access - restart `authentik`
+* Cert Manager - CloudFlare: API key
 * ClickStack - ClickHouse: Password is `clickhouse-app-password`. After rotation, the connection password must be manually updated in the HyperDX UI (Settings -> Connections).
+* ClickStack - MongoDB: Rotates when secret is updated. Also need to restart `clickstack-app` (connection strings).
+* ExternalDNS - CloudFlare: API key
+* Grafana - Admin: Default creds. Restart `grafana`
+* Grafana - OAUTH/OIDC: OIDC creds from Authentik - restart `grafana`
+* Grafana - ClickHouse data source: Access creds. Restart `grafana`.
+* Headlamp - OIDC: OIDC creds from Authentik - restart `headlamp`
+* Otel Collector - ClickStack Ingest: API key from HyperDX. Restart `otel-k8s-collector`
+* Renovate - Token: GitHub PAT to access GitHub
+* SearXNG - Encryption secret. Restart `searxng`
+* Tailscale Operator - Oauth: Tailscale API key. Restart `tailscale-operator`
+* Unpoller - Secret: Creds for UniFi. Restart `unpoller`
