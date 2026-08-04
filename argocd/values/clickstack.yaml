@@ -31,9 +31,29 @@ clickhouse:
         resources:
           requests:
             storage: 5Gi
+      # Keeper requires AVX3. The Intel Mac mini from 2012 only has AVX2.
       podTemplate:
         securityContext: {}
-        nodeHostnameKey: "kubernetes.io/hostname"
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: kubernetes.io/hostname
+                      operator: NotIn
+                      values:
+                        - mini2012
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+              - weight: 100
+                podAffinityTerm:
+                  labelSelector:
+                    matchExpressions:
+                      - key: clickhouse.com/role
+                        operator: In
+                        values:
+                          - clickhouse-keeper
+                  topologyKey: kubernetes.io/hostname
         initContainers:
           - name: fix-permissions
             image: busybox:stable
