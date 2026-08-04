@@ -59,3 +59,18 @@ Managed via two app-of-apps entrypoints: [`argocd_infra_applications.yaml`](./ar
 * SearXNG - Encryption secret. Restart `searxng`
 * Tailscale Operator - Oauth: Tailscale API key. Restart `tailscale-operator`
 * Unpoller - Secret: Creds for UniFi. Restart `unpoller`
+
+## MCP Servers
+
+```json
+{
+  "mcpServers": {
+    "clickstack": {
+      "httpUrl": "https://clickstack.k8s.notsodefault.ca/api/mcp",
+      "headers": {
+        "Authorization": "Bearer ${CLICKSTACK_MCP_TOKEN}"
+      }
+    }
+  }
+}
+```

@@ -111,7 +111,8 @@ clickhouse:
         storageClassName: local-path
         resources:
           requests:
-            storage: 10Gi
+            # Local path isn't going to actually respect this but 75ish is what we expect
+            storage: 75Gi
       # Configure ClickHouse to read passwords securely from the environment using @from_env
       settings:
         extraConfig:
