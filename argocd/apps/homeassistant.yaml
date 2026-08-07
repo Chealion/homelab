@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: homeassistant
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "160"
+    argocd.argoproj.io/compare-options: ServerSideDiff=true # https://github.com/argoproj/argo-cd/issues/19038
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - chart: home-assistant
+      repoURL: https://pajikos.github.io/home-assistant-helm-chart/
+      targetRevision: 0.3.73
+      helm:
+        releaseName: homeassistant
+        valueFiles:
+          - $values/argocd/values/homeassistant.yaml
+    - repoURL: https://github.com/chealion/homelab
+      targetRevision: main
+      ref: values
+  destination:
+    name: in-cluster
+    namespace: homeassistant
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - ServerSideApply=true

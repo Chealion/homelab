@@ -1,0 +1,119 @@
+# Home Assistant — pajikos home-assistant chart
+# Decisions: #157 (chart/flavor), #158 (hostNetwork/discovery/exposure), #154 (recorder→CNPG), #156 (metrics)
+image:
+  repository: ghcr.io/home-assistant/home-assistant
+  # renovate: datasource=docker depName=home-assistant/home-assistant registryUrl=https://ghcr.io
+  tag: "2026.7.4"
+  pullPolicy: IfNotPresent
+
+# Clean resource names (Service, StatefulSet = homeassistant, not homeassistant-home-assistant)
+fullnameOverride: homeassistant
+
+controller:
+  type: StatefulSet
+
+replicaCount: 1
+
+# TZ + recorder DB URL (injected from the homeassistant-recorder-url ExternalSecret, #170)
+# DB_URL = postgresql://<user>:<pass>@homeassistant-db-cluster-rw.homeassistant.svc:5432/homeassistant
+env:
+  - name: TZ
+    value: America/Edmonton
+  - name: DB_URL
+    valueFrom:
+      secretKeyRef:
+        name: homeassistant-recorder-url
+        key: DB_URL
+
+# #153/#158: hostNetwork so mDNS/SSDP reach the LAN directly. dnsPolicy so pod DNS still resolves k8s services.
+hostNetwork: true
+dnsPolicy: ClusterFirstWithHostNet
+
+# hostPort disabled (#158): 8123 via ClusterIP Service, not hostPort. mDNS 5353 + SSDP 1900 ride hostNetwork.
+hostPort:
+  enabled: false
+
+# #158: pin to a node so mDNS advertises a consistent IP across restarts.
+# TODO: set the node name before or after first deploy — kubectl get nodes -o custom-columns=NAME:.metadata.name --no-headers
+nodeSelector: {}
+
+# ClusterIP Service named "http" on 8123 — the HTTPRoute (#158) and ServiceMonitor (#156) target it.
+service:
+  type: ClusterIP
+  port: 8123
+
+# #154: /config PVC on local-path. 5Gi default (config/.storage/custom_components).
+persistence:
+  enabled: true
+  accessMode: ReadWriteOnce
+  size: 5Gi
+  storageClass: local-path
+
+# #158: UI exposed via the chart's native HTTPRoute → l2-gateway homeassistant-listener (#169).
+# Using the chart feature instead of a manual httproute.yaml — the chart owns its own route.
+httpRoute:
+  enabled: true
+  parentRefs:
+    - name: l2-gateway
+      namespace: kube-system
+      sectionName: homeassistant-listener
+  hostnames:
+    - homeassistant.k8s.notsodefault.ca
+
+# GitOps-managed configuration.yaml via the chart's initContainer (mikefarah/yq merge, forceInit: true).
+# forceInit re-merges the template on every start (existing keys win, template keys are re-added if deleted).
+# yq preserves HA's !env_var / !include tags (verified locally).
+configuration:
+  enabled: true
+  forceInit: true
+  trusted_proxies:
+    - 10.0.0.0/8
+    - 172.16.0.0/12
+    - 192.168.0.0/16
+    - 127.0.0.0/8
+  templateConfig: |-
+    # Loads default set of integrations. Do not remove.
+    default_config:
+
+    # #156: Prometheus metrics endpoint. ServiceMonitor (#170) scrapes /api/prometheus with a bearer token.
+    prometheus:
+
+    # Behind the Cilium gateway (HTTPRoute) — trust forwarded-for.
+    http:
+      use_x_forwarded_for: true
+      trusted_proxies:
+        {{- range .Values.configuration.trusted_proxies }}
+        - {{ . }}
+        {{- end }}
+
+    # #154: recorder → CNPG Postgres. DB_URL env var from the homeassistant-recorder-url ExternalSecret (#170).
+    recorder:
+      db_url: !env_var DB_URL
+
+    # Load frontend themes from the themes folder
+    frontend:
+      themes: !include_dir_merge_named themes
+
+    automation: !include automations.yaml
+    script: !include scripts.yaml
+    scene: !include scenes.yaml
+
+# ServiceMonitor created manually in argocd/objects/homeassistant/ (#170) for full control over
+# path (/api/prometheus) and scrapeTimeout (10s). Chart's built-in serviceMonitor is disabled.
+serviceMonitor:
+  enabled: false
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    memory: 1Gi
+
+# HA Container runs as root; drop capabilities but don't force non-root (image has no non-root user).
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  privileged: false
