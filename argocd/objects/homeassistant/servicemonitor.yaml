@@ -1,0 +1,21 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: homeassistant
+  namespace: homeassistant
+  labels:
+    release: kube-prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: home-assistant
+      app.kubernetes.io/instance: homeassistant
+  endpoints:
+    - port: http
+      path: /api/prometheus
+      interval: 30s
+      scrapeTimeout: 10s
+      bearerTokenSecret:
+        name: homeassistant-prometheus-token
+        key: token

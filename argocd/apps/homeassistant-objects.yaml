@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: homeassistant-objects
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "160"
+    argocd.argoproj.io/compare-options: ServerSideDiff=true # https://github.com/argoproj/argo-cd/issues/19038
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/chealion/homelab
+      targetRevision: main
+      path: argocd/objects/homeassistant/
+      # recurse: false — only top-level manifests. The cluster/ subdir is managed
+      # by the homeassistant-db app (#167); this app must not re-apply it.
+      # https://argo-cd.readthedocs.io/en/stable/user-guide/directory/
+      directory:
+        recurse: false
+  destination:
+    name: in-cluster
+    namespace: homeassistant
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - ServerSideApply=true
