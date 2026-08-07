@@ -98,7 +98,8 @@ clickhouse:
             cpu: 250m
             memory: 1Gi
           limits:
-            memory: 2Gi
+            # Needs to match max_server_memory_usage in settings.extraConfig below
+            memory: 3Gi
         # Inject passwords as environment variables from the ExternalSecret `clickstack-secret`
         env:
           - name: CLICKHOUSE_PASSWORD
@@ -139,6 +140,7 @@ clickhouse:
           keep_alive_timeout: 64
           max_concurrent_queries: 100
           max_connections: 4096
+          max_server_memory_usage: 3221225472 # 3Gi in bytes
           storage_configuration:
             disks:
               default:
