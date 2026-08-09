@@ -140,7 +140,7 @@ clickhouse:
           keep_alive_timeout: 64
           max_concurrent_queries: 100
           max_connections: 4096
-          max_server_memory_usage: 536870900 # 4Gi in bytes
+          max_server_memory_usage: 4294967296 #4Gi in bytes
           storage_configuration:
             disks:
               default:
