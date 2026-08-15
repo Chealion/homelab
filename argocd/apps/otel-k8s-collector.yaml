@@ -13,7 +13,7 @@ spec:
   sources:
     - chart: opentelemetry-collector
       repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts
-      targetRevision: 0.166.0
+      targetRevision: 0.170.0
       helm:
         releaseName: otel-k8s-collector
         valueFiles:
