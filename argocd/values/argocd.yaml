@@ -1,6 +1,9 @@
 ---
 global:
   domain: argo.k8s.notsodefault.ca
+  logging:
+    # Use JSON instead of logfmt
+    format: json
 configs:
   params:
     server.insecure: true
