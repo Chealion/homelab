@@ -26,7 +26,7 @@ configs:
     scopes: "[groups, email]"
     policy.csv: |
       p, role:none, *, *, */*, deny
-      g, Argo CD Admins, role:admin
+      g, argocd-admins, role:admin
 controller:
   metrics:
     enabled: true

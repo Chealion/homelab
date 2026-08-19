@@ -53,7 +53,7 @@ grafana: # Line 1225
       token_url: "https://auth.k8s.notsodefault.ca/application/o/token/"
       api_url: "https://auth.k8s.notsodefault.ca/application/o/userinfo/"
       # Optionally map user groups to Grafana roles
-      role_attribute_path: contains(groups, 'Grafana Admins') && 'Admin' || contains(groups, 'Grafana Editors') && 'Editor' || 'Viewer'
+      role_attribute_path: contains(groups, 'grafana-admins') && 'Admin' || contains(groups, 'grafana-editors') && 'Editor' || 'Viewer'
   extraSecretMounts:
     - name: grafana-oauth
       secretName: grafana-oauth
