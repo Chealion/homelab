@@ -13,8 +13,13 @@ controllers:
           READECK_LOG_LEVEL: info
           READECK_LOG_FORMAT: text
           READECK_ALLOWED_HOSTS: readeck.k8s.notsodefault.ca
-          READECK_AUTH_FORWARDED_ENABLED: true
-          READECK_AUTH_FORWARDED_HEADER_USER: X-authentik-username
+          READECK_AUTH_OIDC_PROVIDERS_0_NAME: Authentik
+          READECK_AUTH_OIDC_PROVIDERS_0_URL: https://auth.k8s.notsodefault.ca/application/o/readeck/
+          READECK_AUTH_OIDC_PROVIDERS_0_PROVISIONING: "true"
+          READECK_AUTH_OIDC_PROVIDERS_0_GROUPS: "readeck-admins=admin"
+        envFrom:
+          - secretRef:
+              name: readeck-oauth
         probes:
           liveness: &probes
             enabled: true
