@@ -45,3 +45,8 @@ metadata:
   namespace: default
   labels:
     ipam: homelab-l2
+spec:
+  telemetry:
+    accessLogs:
+      - format: JSON
+      # Default format - https://github.com/cilium/cilium/blob/v1.20.1/pkg/k8s/apis/cilium.io/v2alpha1/gatewayclassconfig_types.go#L190
