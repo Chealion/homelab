@@ -1,4 +1,5 @@
 ---
+policy: upsert-only
 gatewayNamespace: kube-system
 sources:
   - gateway-httproute
