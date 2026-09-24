@@ -2,7 +2,7 @@
 
 ## Cluster Setup
 
-* [Talos](https://talos.dev) cluster configured with [talhelper](https://github.com/budimanjojo/talhelper) - separate repository.
+* [Talos](https://talos.dev) cluster configured with [topf](https://github.com/postfinance/topf) - separate repository.
 
 ## Argo CD
 
