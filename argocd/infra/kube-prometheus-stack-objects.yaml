@@ -22,6 +22,6 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-      - PrunePropogationPolicy=foreground
+      - PrunePropagationPolicy=foreground
       - PruneLast=true
 
