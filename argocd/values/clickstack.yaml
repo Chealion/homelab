@@ -64,6 +64,10 @@ clickhouse:
               - name: clickhouse-storage-volume
                 mountPath: /mnt/data
       containerTemplate:
+        image:
+          repository: clickhouse/clickhouse-keeper
+          # renovate: datasource=docker depName=clickhouse/clickhouse-keeper versioning=docker
+          tag: "26.9.27.3-alpine"
         securityContext:
           allowPrivilegeEscalation: false
           seccompProfile:
@@ -92,7 +96,8 @@ clickhouse:
       containerTemplate:
         image:
           repository: clickhouse/clickhouse-server
-          tag: "25.7-alpine"
+          # renovate: datasource=docker depName=clickhouse/clickhouse-server versioning=docker
+          tag: "26.9.27.3-alpine"
         resources:
           requests:
             cpu: 250m
@@ -180,9 +185,7 @@ mongodb:
   spec:
     members: 1
     type: ReplicaSet
-    version: "5.0.32"
-    # MongoDB Operator requires both data-volume and logs-volume claim templates to be defined
-    # to apply storageClass overrides successfully to all persistent volumes.
+    version: "8.0.34"
     statefulSet:
       spec:
         volumeClaimTemplates:

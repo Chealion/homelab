@@ -5,6 +5,17 @@
   "assignees": ["chealion"],
   "prHourlyLimit": 10,
   "ignorePaths": ["archive/", "examples/"],
+  "packageRules": [
+    {
+      "description": "Update ClickHouse and Keeper together",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": [
+        "clickhouse/clickhouse-server",
+        "clickhouse/clickhouse-keeper"
+      ],
+      "groupName": "clickhouse"
+    }
+  ],
   "kubernetes": {
     "managerFilePatterns": ["/argocd/.+\\.ya?ml$/"]
   },
