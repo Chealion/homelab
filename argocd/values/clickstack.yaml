@@ -160,7 +160,6 @@ clickhouse:
             vertical_merge_algorithm_min_bytes_to_activate: 134217728
           mark_cache_size: 2147483648 # 2Gi
           index_mark_cache_size: 2147483648 # 2Gi
-          uncompressed_mark_cache_size: 1073741824 # 1Gi
           storage_configuration:
             disks:
               default:
