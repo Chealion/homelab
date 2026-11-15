@@ -25,8 +25,10 @@ Managed via two app-of-apps entrypoints: [`argocd_infra_applications.yaml`](./ar
 
 ### Applications
 
+* [Actual Budget](https://actualbudget.org/)
 * [ClickStack](https://github.com/ClickHouse/ClickStack)
 * [Headlamp](https://github.com/headlamp/headlamp)
+* [Home Assistant](https://www.home-assistant.io/)
 * [OpenTelemetry Collector](https://opentelemetry.io/docs/collector/)
 * [Readeck](https://readeck.github.io/)
 * [SearXNG](https://github.com/searxng/searxng)

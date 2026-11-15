@@ -1,0 +1,75 @@
+# Actual Budget — community-charts/actualbudget chart
+# Traffic is served by the Gateway API HTTPRoute in argocd/objects/actualbudget/httproute.yaml.
+#
+# CHART QUIRK — read before editing.
+# The chart renders every OpenID setting — the `actualbudget-openid-secret` Secret and the
+# `envFrom` that loads it — only when `ingress.enabled: true`. That gate is the only path to
+# get ACTUAL_OPENID_* / ACTUAL_MULTIUSER into the container, so `ingress` stays enabled even
+# though no Ingress controller serves it here:
+#   * hosts[0].host is `actualbudget.invalid` — no controller can claim the real hostname
+#   * ACTUAL_OPENID_SERVER_HOSTNAME is set explicitly below, because the chart derives it
+#     from ingress.hosts[0].host
+#   * tls is set only so the chart's derived hostname would still be https
+#   * annotations carry `argocd.argoproj.io/ignore-healthcheck: "true"`, which stops the dead
+#     Ingress reporting Progressing forever and holding the Application with it
+# Setting ingress.enabled to false silently drops multiuser + OpenID config and login breaks.
+fullnameOverride: actualbudget
+
+image:
+  repository: actualbudget/actual-server
+  # renovate: datasource=docker depName=actualbudget/actual-server
+  tag: 26.10.0
+  pullPolicy: IfNotPresent
+
+# Authentik provider slug `actual-budget`, 1Password item `oidc-actualbudget`.
+# Redirect URI registered in Authentik: https://budget.k8s.notsodefault.ca/openid/callback
+login:
+  method: "openid"
+  allowedLoginMethods:
+    - openid
+  openid:
+    enforce: true
+    providerName: "Authentik"
+    discoveryUrl: "https://auth.k8s.notsodefault.ca/application/o/actual-budget/.well-known/openid-configuration"
+    authMethod: "openid"
+    existingSecret:
+      name: actualbudget-oidc
+      clientIdKey: client-id
+      clientSecretKey: client-secret
+
+# Inert: required only to switch on the chart's OpenID rendering. See the note at the top.
+ingress:
+  enabled: true
+  annotations:
+    argocd.argoproj.io/ignore-healthcheck: "true"
+  hosts:
+    - host: actualbudget.invalid
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - secretName: actualbudget-inert-tls
+      hosts:
+        - actualbudget.invalid
+
+extraEnvVars:
+  # The chart would build this from ingress.hosts[0].host; the real hostname is on the HTTPRoute.
+  ACTUAL_OPENID_SERVER_HOSTNAME: "https://budget.k8s.notsodefault.ca"
+  # First OpenID login becomes server owner. Authentik's policy binding decides who gets in.
+  ACTUAL_USER_CREATION_MODE: "login"
+  TZ: America/Edmonton
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 256Mi
+  limits:
+    memory: 1Gi
+
+# /data holds server-files (account.sqlite) and user-files (one sqlite blob per budget).
+persistence:
+  enabled: true
+  accessModes:
+    - ReadWriteOnce
+  storageClass: local-path
+  size: 10Gi
