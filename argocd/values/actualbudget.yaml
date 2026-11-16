@@ -10,6 +10,8 @@
 #   * ACTUAL_OPENID_SERVER_HOSTNAME is set explicitly below, because the chart derives it
 #     from ingress.hosts[0].host
 #   * tls is set only so the chart's derived hostname would still be https
+#   * annotations carry `argocd.argoproj.io/ignore-healthcheck: "true"`, which stops the dead
+#     Ingress reporting Progressing forever and holding the Application with it
 # Setting ingress.enabled to false silently drops multiuser + OpenID config and login breaks.
 fullnameOverride: actualbudget
 
@@ -19,7 +21,7 @@ image:
   tag: 26.10.0
   pullPolicy: IfNotPresent
 
-# Authentik provider "actualbudget", 1Password item `oidc-actualbudget`.
+# Authentik provider slug `actual-budget`, 1Password item `oidc-actualbudget`.
 # Redirect URI registered in Authentik: https://budget.k8s.notsodefault.ca/openid/callback
 login:
   method: "openid"
@@ -28,7 +30,7 @@ login:
   openid:
     enforce: true
     providerName: "Authentik"
-    discoveryUrl: "https://auth.k8s.notsodefault.ca/application/o/actualbudget/.well-known/openid-configuration"
+    discoveryUrl: "https://auth.k8s.notsodefault.ca/application/o/actual-budget/.well-known/openid-configuration"
     authMethod: "openid"
     existingSecret:
       name: actualbudget-oidc
