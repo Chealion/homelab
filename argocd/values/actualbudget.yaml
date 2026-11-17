@@ -18,7 +18,7 @@ fullnameOverride: actualbudget
 image:
   repository: actualbudget/actual-server
   # renovate: datasource=docker depName=actualbudget/actual-server
-  tag: 26.10.0
+  tag: 26.11.0
   pullPolicy: IfNotPresent
 
 # Authentik provider slug `actual-budget`, 1Password item `oidc-actualbudget`.
